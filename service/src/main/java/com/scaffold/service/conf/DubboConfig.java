@@ -25,12 +25,21 @@ public class DubboConfig {
         return applicationConfig;
     }
 
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(value = "dubboProtocolConfig")
     public ProtocolConfig createProtocolConfig() {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setName("dubbo");
+        protocolConfig.setThreads(256);
+        protocolConfig.setAccepts(128);
+        protocolConfig.setIothreads(128);
+        return protocolConfig;
+    }
+    //@Bean(value = "httpProtocolConfig")
+    public ProtocolConfig createHttpProtocolConfig() {
+        ProtocolConfig protocolConfig = new ProtocolConfig();
+        protocolConfig.setName("http");
         protocolConfig.setThreads(512);
+        protocolConfig.setPort(25002);
         return protocolConfig;
     }
 

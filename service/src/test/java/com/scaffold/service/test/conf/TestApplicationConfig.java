@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @Slf4j
 @EnableDubbo(scanBasePackages = {"com.scaffold.service.test.*"})
-//@AutoConfigureAfter(MetricsConfig.class)
 public class TestApplicationConfig {
     @Value("zookeeper://127.0.0.1:2181")
     private String zkInnerAddr;
@@ -36,7 +35,10 @@ public class TestApplicationConfig {
     public ProtocolConfig createProtocolConfig() {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setName("dubbo");
-        protocolConfig.setThreads(512);
+        protocolConfig.setThreads(128);
+        protocolConfig.setCorethreads(16);
+        protocolConfig.setAccepts(8);
+        protocolConfig.setQueues(10000);
         return protocolConfig;
     }
 

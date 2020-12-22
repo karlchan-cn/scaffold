@@ -60,7 +60,7 @@
         <Logger name="ExecutorStatPool" level="debug">
             <AppenderRef ref="statAppender"/>
         </Logger>
-        <Root level="${sys:log.level}">
+        <Root level="debug">
             <AppenderRef ref="console"/>
 <!--            <AppenderRef ref="error"/>-->
 <!--            <AppenderRef ref="defaultAsync"/>-->
