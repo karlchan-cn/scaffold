@@ -1,0 +1,21 @@
+syntax = "proto3";
+package mixer;
+import "mixer/MixAdRequest.proto";
+import "mixer/MixAdResponse.proto";
+
+option java_package = "com.heytap.ad.show.mixer.service";
+option java_multiple_files = true;
+option java_outer_classname = "IAdShowMixerServiceProto";
+
+/**
+ * 广告播放融合服务，负责对各个服务发起广告请求并进行混排
+ * @author 80138269
+ */
+service IAdShowMixerService {
+    /**
+     * 根据广告扩展请求获取广告列表
+     * @param mixAdRequest
+     * @return
+     */
+     rpc getMixAdList(MixAdRequest) returns (MixAdResponse) {};
+}

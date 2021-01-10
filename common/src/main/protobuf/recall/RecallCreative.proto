@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package recall;
+option java_package = "com.heytap.ad.show.recall.entity";
+
+// 召回广告创意
+message RecallCreative {
+    int64 creativeId        = 1; // 创意ID
+    int32 pageType          = 2; // 页面类型
+    int32 minSdkVersion     = 3; // 最少sdk版本
+}

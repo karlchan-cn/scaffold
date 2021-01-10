@@ -1,0 +1,41 @@
+syntax = "proto3";
+import "common/Geo.proto";
+import  "common/enums/CommonEnums.proto";
+
+package context;
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.context.entity";
+option java_outer_classname = "UserProto";
+/**
+ 用户对象
+ */
+message User {
+  int32 yearOfBirth         = 1; // 用户出生年份-year of birth
+  string gender             = 2; // M=男,F=女,O=未知
+  repeated string keywords  = 3; //用户拥有的关键词,预留作用
+  common.Geo geo            = 4; // 用户(注册)经纬度信息
+  Behavior behavior         = 5; // 用户行为对象
+}
+/**
+用户行为信息
+ */
+message Behavior {
+  BehaviorSwipeType swipeType              = 1; // 滑动类型:【1:向上,2:向下,3:向左,4:向右】
+  int32 swipeCount                         = 2; // 滑动次数,与swipeType配合使用.Demo:向下滑动3次,swipeType = 2 && swipeCount = 3
+  int64 clientTime                         = 3; // 客户端时间,精确到秒 TODO 待确定
+  string datatype                          = 4; // 信息流使用,数据类型，如feed_show,feed_click,feed_expose等
+  string eventValue                        = 5; // 信息流使用,操作值-如时长、文件大小，由调取方法获取，默认为0
+  repeated string keywords                 = 6; // 搜索场景,用户输入关键词,可能是切好词后的结果
+  common.enums.SearchType searchType       = 7; // 搜索场景,用户搜索类型,参考-SearchType
+}
+/**
+用户滑动行为
+ */
+enum BehaviorSwipeType{
+  ST_DEFAULT = 0; //默认
+  ST_UP      = 1; //向上滑动
+  ST_DOWN    = 2; //向下
+  ST_LEFT    = 3; //左
+  ST_RIGHT   = 4; //右
+}
+

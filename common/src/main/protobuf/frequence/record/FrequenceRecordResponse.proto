@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package frequence;
+option java_package = "com.heytap.ad.show.frequence.entity";
+option java_multiple_files = true;
+option java_outer_classname = "FrequenceRecordResponseProto";
+
+/** 频控请求记录更新响应对象 **/
+message FrequenceRecordResponse {
+  int32 code              = 1; //响应状态，0-正常，非0：异常
+  string msg              = 2; //响应信息
+}

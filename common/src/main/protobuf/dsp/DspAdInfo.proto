@@ -1,0 +1,208 @@
+syntax = "proto3";
+
+import "common/enums/ShowSettingEnum.proto";
+import "common/enums/CommonEnums.proto";
+package dsp;
+option java_package = "com.heytap.ad.show.dsp.entity";
+option java_multiple_files = true;
+option java_outer_classname = "DspAdInfoProto";
+
+// Dsp广告对象-
+message DspAdInfo {
+  int64 adId                              = 1;  // 广告ID
+  int64 ownerId                           = 2;  // 广告主ID
+  int64   adPlanId                        = 3;  // 广告计划ID
+  int64   adGroupId                       = 4;  // 广告组ID
+  repeated DspAdCreative creatives        = 5;  // 创意对象集合
+  common.enums.InteractionType actionType = 6;  // 交互类型，如跳转链接、打开商店、打开中间页等
+  AdBillingInfo adBillingInfo             = 7;  // 广告计费相关对象
+  int64 adSymbol                          = 8;  // 广告打标
+  bool isToppedAd                         = 9;  // 是否置顶广告
+  bool isDpa                              = 10; // 是否DPA广告
+  int32 programmaticType                  = 11; // 程序化广告标识  0-非程序化 1-PDB 2-PD 3-PA
+  string labId                            = 12; //算法返回实验号
+  uint32  expandType                      = 13; // 拓量类型
+  bool  autoExpand                        = 14; // 是否拓量
+  uint32 expandScore                      = 15; // 拓量分数
+  uint32 expandVersion                    = 16; // 拓量版本
+  int64 posId                             = 17; // 当前广告所属广告位
+  uint32 adCategory                       = 18; // 当前广告类别
+  uint32 recallSource                     = 19; // 召回来源
+  uint32 kwType                           = 20; // 词性: 1 精准词 2 管控词 4 商店禁推 8 浏览器禁推 16 出价词 32 算法词
+  uint32 fixedPosition                    = 21; // 固定排序位置
+  int32 h5OpenMethod                      = 22; //H5应用的打开方式 【0-webview,1-浏览器】-品牌业务定义
+  RespSdkConfig respSdkConfig             = 23; //广告SDK响应配置配置
+  uint32  keywordMatchType                = 24; // 匹配类型:0 普通匹配,1 精准匹配 2 词组匹配 3 宽泛匹配，搜索特有
+  string  originalKeyword                 = 25; // 匹配模式下,广告主原始出价词，搜索特有
+  int32   weight                          = 26; //加权权重
+  map<string, string> ext 			      = 27; // 扩展信息
+  TimeSec timeSec                         = 28; //播放信息
+  uint32 forceOperationFlag               = 29; // 精准词强运营管控标记(1泛词强运营  2精准词强运营)，搜索特有
+  int32 contentType                       = 30; // 【1：链接推广；2：应用推广；3：快应用推广】
+  int32 bidFrom                           = 31; // 竞价来源，搜索特有
+  bool  expandKeywordSwitch               = 32; // 是否打开了拓词，搜索特有
+  string nerInfo                          = 33; //ner名称，权重信息，搜索特有
+  string nerForBid                        = 34; //如果ner词包出价竞价成功，该值为ner词包名称，搜索特有
+
+
+  common.enums.InteractionType appInteractionLimit=36;//应用交互类型限制(联盟特有)
+
+  string dspAdId                          = 37; // 外部dsp广告Id
+  string dspShowName                      = 38; // 外部dsp名
+  int64  dspId                            = 39; // 外部dspId
+  int64  effectTargetId                   = 40; // 定向使用的target id
+  int64  appId                            = 41; // 搜索自然量，没有广告ID；需要透传recall的appId
+  int32  grade                            = 42; // 评分、排名
+  bool   isGameCombineAd                  = 43; // 是否是游戏联运ad
+
+  bool interactionGlobalEffect            = 44;//交互类型全局生效
+  int32 adSource                          = 45; // adSource广告来源
+  uint32 promotionCategory                = 46; //应用推广样式(lm)
+  string moduleId                         = 47; // 模块id
+  uint32 moduleGroup                      = 48; // 模块组id
+
+  string encodedAppId                     = 49; // 加密appId，百度算法合作
+  string encodedAdId                      = 50; // 加密adId，百度算法合作
+
+  int64  parPosId                         = 51; // 父广告位ID/广告位组Id-品牌广告位连投场景
+  int64  brandPosId                       = 52; //品牌广告位id
+  int32  priority                         = 53; // 广告优先级-竞价使用.120-品牌默认,100-信息流&联盟广告
+  bool   isBottomAd                       = 54; // 是否打底广告,用作品牌PD竞价广告在RTB广告无填充场景候补标识符
+
+  uint32  keywordSource                   = 55; // 关键词来源: 1. 用户输入 2. nlp 切词  99. 未定义
+  uint32  keywordStock                    = 56; // 关键词所属词库类型:1-15表示算法词库
+  uint32  qualityLevel                    = 57; // 质量分级
+  // 融合3.0新增字段
+  uint32  flowScene                       = 58; //流量场景
+  int32   showStrategyAlgId               = 59; //实验平台播放层策略算法ID
+  uint32  adFlag                          = 60; //营销平台版本标记: 0.营销平台2.0版本AD  1.营销平台3.0版本AD
+}
+
+message AdBillingInfo {
+  int32 billingType = 1; // 计费类型
+  int32 bid = 2;        // 普通出价
+  int32 bidLevel = 3;   // 出价层级，0广告出价，1广告组出价
+  int32 ocpxBid = 4;    // ocpx转化出价
+  int32 ocpxState = 5;  // ocpx状态
+  int32 ocpxType = 6;   // ocpx转化类型
+  int32 deepOcpxBid = 7;    // 深层ocpcx转化价格
+  int32 deepOcpxType = 8;   // 深层ocpx类型，值参考浅层ocpx类型
+  int32 ocpxOptmType = 9;  // ocpx投放模式：0-单目标，1-双出价
+  int32 chargePrice = 10;   // 扣费价格
+  int64 statCtrE6 = 11;     // 统计CTR * 10^6
+  int64 statCvrE6 = 12;     // 统计CVR * 10^6
+  int64 statEcpmE3 = 13;    // 统计ECPM * 10^3
+  int32 costType = 14;      // 扣费类型
+  int32 cvrBid = 15;        // cvr出价
+  int64 predictCtrE6 = 16;  // 预估CTR * 10^6
+  int64 predictCvrE6 = 17;  // 预估CTR * 10^6
+  int32 predictBid = 19;    // 预估出价
+  int32 reservePrice = 20;  // 单位分,最低保留价,广告维度配置，兼容日后的价格歧视策略。
+  int32 quality = 21;       // 质量分
+  int32 predictOcpxType = 22;     // 算法判断的ocpx转化类型
+  int32 bidForRankerFail = 23;    // 算法失败时的出价
+  int64 predictCvr2E6 = 24;     // 算法返回cvr2
+  int64 predictCtrlFactor2E6 = 25;   // 算法返回ctrFactor2
+  string alPredictInfoUpload=26;     //算法预测信息:8个字段 predict_cvr1:predict_cvr2:final_ctr:final_cvr1:final_cvr2:ctrl_factor1:ctrl_factor2
+  double ocpxAlpha = 27; //ocpc控制因子
+  int32 cvrState = 28; // cvr预估状态： 0 成功 1 失败或者超时 2 没有数据 3 非法数据 4 范围不对
+  int32 gamePriceState = 29; // 游戏联运价格获取状态： 0 成功 1 失败或者超时 2 没有数据 3 非法数据 4 范围不对
+  int64 predictEcpmE3 = 30;    // 预估ECPM * 10^
+  // 融合3.0新增字段
+  int64 priceStrategyId = 31; //改价策略ID
+  int32 runningCPARatio1E6 = 32; //转化改价系数
+  int32 runningCPARatio2E6 = 33; //深度转化改价系数
+}
+
+/**
+广告SDK响应配置配置
+ */
+message RespSdkConfig{
+  int32 coldStartPullMatInterval                = 1;      //冷启动拉取素材间隔时间
+  int32 offlineRepeatRequestInterval            = 2;      // 离线接口重复请求间隔，单位为秒
+  string templateUrl                            = 3;	  // 广告对应的模板url
+  string templateMd5                            = 4;	  // 模板url对应的md5
+  string templateData                           = 5;	  // 模板需要的数据内容（json）
+  int32 videoLteCacheable                       = 6;        //video是否可以在4g下缓存  默认0【0:不允许下载,1:允许下载】-品牌业务定义
+}
+
+
+message DspAdCreative {
+  int64 creativeId = 1; // 创意ID
+  int32 globalSpecId = 2;// 创意类型
+  int32 contentType = 3; // 【1：链接推广；2：应用推广；3：快应用推广】
+  int64 appId = 4;
+
+  //文本物料
+  string showTitle = 5;//创意文案,兼容广告文案
+  string desc = 6;  // 描述
+  string brandName = 7;//创意品牌名称,类似于广告的title
+  string clickText = 8; // 点击更多文本
+
+  //落地页相关
+  string targetUrl = 9;//落地页URL案
+  string deeplinkUrl = 10;//DeepLink地址
+  string instantUrl = 11;//快应用Url
+
+  //素材
+  DspAdMaterial video = 12;  // 视频信息
+  repeated DspAdMaterial materials = 13;//素材列表,参考下图素材列表
+
+  //监测链接
+  repeated TrackingInfo tracking = 14; // 监测链接
+  int32 visibleTrack = 15; // 可视化监测标识【0-否,1-是】
+
+  //DPA相关
+  int64 dpaId = 17;//dpa商品id
+  int64 dpaTemplateId = 18;//dpa模板id
+  string dpaStrategy = 19;//召回类型: hot热门召回;keyword关键词召回
+  int64 dpaSourceId = 20;//dpa商品库id
+
+  //其他
+  LandscapeType landscapeType = 23; // 横竖屏类型.【0-无作用,1-横屏,2-竖屏】-参考LandscapeType
+  string dspShowName = 24; // 程序化创意的DSP展示名称
+  string responseId = 25; //  程序化创意响应ID.
+
+  int32 itemKind = 26; // 1 -- mainItem 2 -- subItem 其他 -- 也是subItem
+
+}
+
+message TrackingInfo {
+  uint32 type = 1;          // 监测链接类型
+  repeated string url = 2;  // 监测链接
+}
+
+message DspAdMaterial {
+  int64 mId = 1;//素材Id
+  string materialUrl = 2;//素材URL
+  string openMaterialId = 3;//外部素材Id
+  int32 width = 4;//素材宽度
+  int32 height = 5;//素材高度
+  int32 type = 6;//素材类型【1-图片,2-视频,3-通用素材】
+  int32 size = 7;//素材大小
+  string md5 = 8;//素材md5
+  string webpMd5 = 9;//webp素材Md5
+  string compressedMd5 = 10;//压缩素材Md5
+  string compressedUrl = 11;//压缩视频的url
+  string compressedSize = 12;//压缩后素材大小
+  int32 duration = 13;//素材长度。精确到毫秒
+  repeated string videoConf = 14;  // 视频配置
+  int32 videoStyle = 15;		// 视频样式：0:顶部展示广告+广告H5，1:视频在H5内
+}
+
+// 时间段
+message TimeSec {
+  int64 beginTime = 1;	// 广告开始时间
+  int64 endTime = 2;		// 广告结束时间
+  string timeset = 3;	// 时段配置（循环搁置）
+}
+
+/**
+横竖屏类型枚举
+ */
+enum LandscapeType{
+  LANDSCAPE_DEFAULT = 0; //无横竖屏配置
+  PORTRAIT = 1; // 竖屏.
+  LANSCAPE = 2; // 横屏.
+}
+

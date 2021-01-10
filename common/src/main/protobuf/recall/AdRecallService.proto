@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "recall/RecallRequest.proto";
+import "recall/RecallResponse.proto";
+package dsp;
+
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.recall.service";
+
+/** 广告召回服务 **/
+service AdRecallService {
+  /**
+  * 广告召回接口
+  */
+  rpc recall(recall.RecallRequest) returns(recall.RecallResponse);
+}

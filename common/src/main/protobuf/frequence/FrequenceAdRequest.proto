@@ -1,0 +1,33 @@
+syntax = "proto3";
+import "frequence/FrequenceAdInfo.proto";
+import "context/Header.proto";
+import "common/enums/CommonEnums.proto";
+import "frequence/FrequenceRecordInfo.proto";
+
+package frequence;
+option java_package = "com.heytap.ad.show.frequence.entity";
+option java_multiple_files = true;
+option java_outer_classname = "FrequenceRequestProto";
+
+/** 频控请求对象 **/
+message FrequenceRequest {
+  context.Header header = 1; // 请求头部信息
+  string imei = 2; //imei设备号(openId)
+  int64 posId = 3; // 广告位ID
+  int64 mediaId = 4; // 媒体ID
+  int64 pageId = 5; // 页面ID
+  common.enums.BizType bizType = 6; // 业务类型
+  repeated FrequenceAdInfo adInfos = 7; // 广告信息列表
+  int64 cityId = 8; // 城市
+  string tagId = 9; // 标记ID
+  int32 adForceType = 10; // 广告强拉类型（联盟根据不同类型进行频次限制）
+  map<string, FrequenceRecordInfo>  userFrequenceCacheInfos = 11;//用户频次缓存信息[仅拆分Ad过滤接口使用]
+  QueryType queryType = 12;//是否获取用户访问过的图片指纹
+}
+/**
+ * 频控查询类型
+ */
+enum QueryType {
+  QUERY_TYPE_DEFAULT = 0;                    // pb枚举默认值
+  IMG_FINGERPRINT = 1;                       // 信息流相似图片频控查询
+}

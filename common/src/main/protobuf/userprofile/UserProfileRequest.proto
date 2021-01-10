@@ -1,0 +1,37 @@
+syntax = "proto3";
+import "context/Device.proto";
+import  "context/Header.proto";
+import "common/enums/CommonEnums.proto";
+package userprofile;
+option java_package = "com.heytap.ad.show.userprofile.entity";
+option java_multiple_files = true;
+option java_outer_classname = "UserProfileRequestProto";
+
+/** 用户画像请求对象 **/
+message UserProfileRequest {
+    context.Header header                       = 1;    // 请求Header
+    common.enums.BizType bizType                = 2; // 业务类型
+    UserProfileDevice device                    = 3; // 设备信息
+    repeated QueryType queryType                = 4; // 查询类型
+}
+
+/** 查询类型 **/
+enum QueryType {
+    ALL                                         = 0; // 所有(不包含人群包)
+    BEHAVIOR                                    = 1; // 查行为
+    PORTRAIT                                    = 2; // 查画像
+    BASE_INFO                                   = 3; // 查基本信息
+    AUDIENCE                                    = 4; // 查人群包
+}
+
+/** 设备信息 **/
+message UserProfileDevice {
+    string imei                                 = 1; // imei设备号
+    string ouId                                 = 2; // ouId状态匿名设备标识符（Open Anonymous Device）,对应外部oaId
+    string duId                                 = 3; // 对应外部vaId
+    string guId                                 = 4; // 对应外部udId
+    string anId                                 = 5; // 对应Android Id
+    string ipv4                                 = 6; // IPv4
+    string ipv6                                 = 7; // IPv6
+    string model                                = 8; // 机型
+}

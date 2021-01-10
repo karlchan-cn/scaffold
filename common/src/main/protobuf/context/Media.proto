@@ -1,0 +1,84 @@
+syntax = "proto3";
+import "common/Geo.proto";
+import "common/ApkSigner.proto";
+option java_multiple_files = true;
+package context;
+option java_package = "com.heytap.ad.show.context.entity";
+option java_outer_classname = "MediaProto";
+/** 媒体对象 **/
+message Media {
+  string id                         = 1; // 流量分发渠道的Id,adx分配/为空
+  int64 appId                       = 2; // 应用的AppId. Color OS定义
+  string systemId                   = 3; // ColorOS 分配的systemId，如浏览器-2007
+  string enterId                    = 4; // 入口ID-含义待细化 //
+  Content content                   = 5; // 当前用户环境的内容上下文
+  string pkgName                    = 6; // app对应的Android系统package name
+  string category                   = 7; // 业务大类-含义待细化
+  int64 versionCode                 = 8; // version code,数值类型版本号
+  string version                    = 9; // version字符串名字
+  AdSdk adSdk                       = 10;// 广告SDK对象
+  InstantInfo instant               = 11;// 快应用信息对象
+  uint32  platform                  = 12;// 媒体平台（快应用、Android 、H5、线下）
+  string  rawPkgName                = 13;// 原始包名（联盟用）
+  repeated common.ApkSigner apkSigner      = 14;// 应用签名，列表用来兼容应用有多个签名的情况（联盟用）
+}
+/** 广告SDK对象 **/
+message AdSdk{
+  int32 versionCode                 = 1; // 广告SDK数值类型版本号
+  string version                    = 2; // SDK字符串版本号
+  repeated int32 cachedPicIds       = 3; // 已缓存的素材ID列表 TODO 品牌接口 and 预下发接口
+  int64 dailyLteTraffic							= 4; // 用户当天的LTE流量使用 - 品牌SDK功能
+  int64 materialConsumption 				= 5; // 用户素材空间消耗 - 品牌sdk功能
+}
+
+/** 内容对象，描述流量请求的内容上下文信息 **/
+message Content {
+  string docId                             = 1; // 文章ID
+  string docTitle                          = 2; // 文章title
+  string pageId                            = 3; // 内容页面ID
+  string algoSource                        = 4; // 内容使用的个性化算法:如oppo
+  string docSource                         = 5; // 内容来源:网易/头条等,具体demo值需要找信息流确认
+  string mediaId                           = 6; // 内容媒体ID
+  string devId                             = 7; // 内容开发者ID,OS内容好开发者的ID
+  repeated string keywords                 = 8; // 内容关键词
+  repeated string category                 = 9; // 内容分类
+  int64 publishTime                        = 10; // 内容发布时间戳,精确到毫秒
+  int32 length                             = 11; // 流媒体长度，精确到秒
+  string url                               = 12; // 内容http访问的地址
+  ContentContext context                   = 13; // 内容上下文
+  string channel                           = 14; // 非标准化的channel,原来所有业务的channel字段
+  string parModuleId                       = 15; // 如果是从其他模块跳转则必填。该值指跳转前的模块id，若无跳转，建议传空或与moduleId保持一致，如从一点列表页跳到沉浸视频，moduleId=immersiveVideo,parModuleId=8000
+  string moduleId                          = 16; // 定义来自信息流场景.内容模块Id.1:列表页,传频道id,如:8000.2:非列表页的native位置,需要与广告约定,如：从一点推荐页点击进入沉浸视频：moduleId=immersiveVideo,parModuleId=8000从一点推荐页跳转到视频详情页，信息流后贴片上报：moduleId=patchVideo, parModuleId=8000也就是说moduleId传的是当前模块的值，parModuleId传的是跳转前的moduleId，模块不完全等于频道（目前跳转的场景含沉浸视频，视频详情页，视频后贴片.3:H5不传
+  string channelId                         = 17; // 频道id
+  ContentRelatedType relatedType           = 18; // 当前内容相关的类型-app,包名,主题
+  repeated string relatedIds               = 19; // 当前内容相关的ids,主题/app/包名
+  string standardChannel                   = 20; // 标准化频道,兼容信息流channel2
+  string localLocation                     = 21; // 本地频道名称,例如当前手机的本地是深圳
+  string channelPosExt                     = 22; // 频道位置的扩展信息，信息流中的adPosInfo
+}
+/** 内容上下文枚举 **/
+enum ContentContext {
+  CONTENT_CONTEXT_UNKNOWN                  = 0;// 未知上下文
+  CONTENT_CONTEXT_VIDEO                    = 1;// 视频流环境【video】
+  CONTENT_CONTEXT_GAME                     = 2;// 视频流环境【video】
+  CONTENT_CONTEXT_MUSIC                    = 3;// 游戏【game】
+  CONTENT_CONTEXT_APPLICATION              = 4;// 应用【application】
+  CONTENT_CONTEXT_TEXT                     = 5;// 文本【text】
+}
+/** 内容相关的类型枚举 **/
+enum ContentRelatedType {
+  DEFAULT                                  = 0 ;// 默认
+  APP                                      = 1;// APP
+  PKG                                      = 2;// 包名
+  FILE_NAME                                = 3;// 文件名
+  SEARCH_KW                                = 4;// 搜索关键字
+  THEME_CATEGORY                           = 101;// 主题分类
+  THEME_ID                                 = 102;// 主题ID
+}
+/** 快应用信息 **/
+message InstantInfo {
+  string version                           = 1; // 快应用平台版本信息,demo:urlEncode(101001/1031/1)=101001%2F1031%2F1
+  string sdkVersion                        = 2; // 快应用SDK版本
+  bool installed                           = 3; // 手机上是否已经安装了快应用平台
+  int64 firstActiveTime                    = 4; // 首次活跃时间，单位毫秒
+}

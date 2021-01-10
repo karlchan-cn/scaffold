@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+
+package context;
+option java_package = "example.protobuf";
+option java_outer_classname = "User";
+
+/** 统一请求对象 **/
+message User {
+  string name                 = 1; // 用户名称
+  int32 favorite_number       = 2; // 最喜欢的号码
+  int32 favorite_color        = 3; // 最喜欢的颜色
+
+}
+
