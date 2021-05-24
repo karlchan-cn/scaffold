@@ -5,7 +5,7 @@
 .settings/
 
 # Maven
-./target/
+target/
 dependency-reduced-pom.xml
 pom.xml.versionsBackup
 .factorypath
@@ -34,3 +34,6 @@ build/
 # system ignore
 .DS_Store
 Thumbs.db
+
+#flatten
+.flattened-pom.xml
