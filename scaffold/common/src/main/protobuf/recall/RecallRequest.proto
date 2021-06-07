@@ -1,0 +1,46 @@
+syntax = "proto3";
+package recall;
+
+import  "common/enums/CommonEnums.proto";
+import  "context/Header.proto";
+import  "context/Device.proto";
+import  "dsp/pos/DspMediaInfo.proto";
+import  "recall/RecallConfig.proto";
+import  "recall/RecallMedia.proto";
+import  "recall/RecallInstantApp.proto";
+import  "recall/RecallPosition.proto";
+import  "recall/RecallSwitch.proto";
+import  "userprofile/UserProfileResponse.proto";
+
+
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.recall.entity";
+
+// 召回请求描述
+
+message RecallRequest {
+    context.Header                  header                   = 1;    // 请求Header
+
+    // 类型信息
+    common.enums.BizType            bizType                  = 2;    // 业务类型
+    common.enums.RecallType         recallType               = 3;    // 召回类型
+    common.enums.SearchType         searchType               = 4;    // 搜索类型
+    common.enums.BottomType         bottomType               = 5;    // 打底方式,召回类型是打底召回类型时生效,0:非打底请求,1:普通打底,2:余量打底
+
+    // dsp透传的媒体/广告/画像/设备等信息
+    context.Device                  device                   = 6;    // 设备信息
+    userprofile.UserProfile         user                     = 7;    // 用户信息
+    recall.RecallMedia              media                    = 8;    // 媒体信息
+    recall.RecallInstantApp         instantApp               = 9;    // 快应用信息
+    // 召回配置
+    recall.RecallPosition           position                 = 10;   // 广告位信息
+    recall.RecallConfig             config                   = 11;   // 召回配置项
+    recall.RecallSwitch             switches                 = 12;   // 召回控制项
+    // 其他选项
+    uint64                          adEndTimeMs              = 13;   // 广告结束时间,召回类型是预取召回时生效,用于品牌广告预取
+    uint32                          ownerAdSize              = 14;   // 单个广告主最大的广告召回数量
+    uint32                          size                     = 15;   // 召回广告数量
+    // 扩展字段
+    map<string, string>             ext                      = 16;   // 扩展字段
+}
+

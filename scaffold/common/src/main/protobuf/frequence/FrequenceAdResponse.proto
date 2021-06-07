@@ -1,0 +1,20 @@
+syntax = "proto3";
+package frequence;
+
+import "frequence/FrequenceRecordInfo.proto";
+option java_package = "com.heytap.ad.show.frequence.entity";
+option java_multiple_files = true;
+option java_outer_classname = "FrequenceResponseProto";
+
+/** 频控响应对象 **/
+message FrequenceResponse {
+  int32 code                                                = 1;//响应状态，0-正常，非0：异常
+  string msg                                                = 2;
+  bool blockAll                                             = 3;//是否屏蔽所有流量
+  repeated string blockAdIds                                = 4;//频控的广告ID列表
+  map<string, FrequenceRecordInfo>  userFrequenceCacheInfos = 5;//用户频次缓存信息[仅拆分Ad过滤接口使用]
+  map<string, ImgFingerprints> imgFingerprints              = 6;//返回的图片指纹信息（key为规格）
+}
+message ImgFingerprints{
+  repeated string imgFingerprint =1; //图片指纹
+}

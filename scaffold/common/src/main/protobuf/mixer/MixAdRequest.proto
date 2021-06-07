@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "context/Header.proto";
+import "context/AdRequest.proto";
+package mixer;
+
+option java_package = "com.heytap.ad.show.mixer.entity";
+option java_multiple_files = true;
+option java_outer_classname = "MixAdRequestProto";
+
+/** 广告位信息对象 **/
+message MixAdRequest {
+    context.Header header                                   = 1;
+    context.AdRequest adRequest                             = 2; // 广告请求信息
+    bool closeAdTrace                                       = 3; // 是否关闭跟踪（关闭特定定向【与用户相关的如性别定向】和算法）
+}

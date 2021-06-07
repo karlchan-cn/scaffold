@@ -1,0 +1,12 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package common;
+option java_package = "com.heytap.ad.show.common";
+option java_outer_classname = "ApkSignerProto";
+/** 应用签名 **/
+ message ApkSigner {
+   string md5 = 1;
+   string sha1 = 2;
+   string sha256 = 3;
+ }
+

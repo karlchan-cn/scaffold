@@ -1,0 +1,13 @@
+syntax = "proto3";
+package recall;
+
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.context.entity";
+
+// 召回请求快应用信息
+message RecallInstantApp {
+    string      version           = 1; // 快应用平台版本信息,demo:urlEncode(101001/1031/1)=101001%2F1031%2F1
+    string      sdkVersion        = 2; // 快应用SDK版本
+    bool        installed         = 3; // 手机上是否已经安装了快应用平台
+    int64       firstActiveTime   = 4; // 首次活跃时间，单位毫秒
+}

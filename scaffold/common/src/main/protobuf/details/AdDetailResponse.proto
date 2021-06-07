@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "details/AdDetails.proto";
+package details;
+option java_package = "com.heytap.ad.show.details.entity";
+option java_multiple_files = true;
+option java_outer_classname = "AdInfoResponseProto";
+
+message AdDetailResponse {
+  int32 code                                  = 1;    // 返回编码，0成功，其他失败
+  string msg                                  = 2;    // 返回信息
+  details.AdDetails data                      = 3;    // 广告详情信息
+}
+
+message AdDetailListResponse {
+  int32 code                                  = 1;    // 返回编码，0成功，其他失败
+  string msg                                  = 2;    // 返回信息
+  repeated details.AdDetails data             = 3;    // 广告详情列表
+}
+
+message AdDetailMapResponse {
+  int32 code                                  = 1;    // 返回编码，0成功，其他失败
+  string msg                                  = 2;    // 返回信息
+  map<int64, details.AdDetails> data          = 3;    // 广告详情map
+}

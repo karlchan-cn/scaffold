@@ -1,0 +1,16 @@
+syntax = "proto3";
+package recall;
+
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.context.entity";
+
+// 召回请求广告位信息
+message RecallPosition {
+    uint64  positionId                  = 1; // 广告位ID
+    string  originalPositionId          = 2; // 原始广告位ID
+    string  channelId                   = 3; // 信息流频道ID
+    bool    auditBlockType              = 4; // 审核屏蔽
+    uint32  permissionBits              = 5; // 广告位权限
+    string  cacheTag                    = 6; // 频控标记
+    uint64  siteId                      = 7; // 广告位ID
+}

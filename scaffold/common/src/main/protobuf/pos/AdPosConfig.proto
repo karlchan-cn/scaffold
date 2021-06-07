@@ -1,0 +1,163 @@
+syntax = "proto3";
+import "common/enums/CommonEnums.proto";
+import "common/enums/ShowSettingEnum.proto";
+package pos;
+option java_package = "com.heytap.ad.show.common.pos.entity";
+option java_multiple_files = true;
+option java_outer_classname = "AdPosConfigProto";
+
+/** 广告位配置对象 **/
+message AdPosConfig {
+  AdPosBasicInfo basicInfo = 1; // 广告位基本信息
+  repeated AdPosFlowConfig flowConfig = 2; // 广告位流量配置
+  AdPosCreativeConfig creativeConfig = 3; // 广告位创意配置
+  AdPosBasicSetting  basicSetting = 4; // 广告位权限配置
+  AdSiteInfo siteInfo = 5; // 站点（媒体）基本信息
+  map<uint32, ApiSourceConf>  apiSourceConf = 6;// API渠道配置，key:apiSource,value:ApiSourceConf
+}
+
+/** 站点（媒体）基本信息 **/
+message AdSiteInfo{
+  uint64 siteId = 1; // 站点id（即媒体ID）
+  uint64 channelId = 2; // 渠道id
+  uint32 invalid = 3; // 媒体是否有效，1是，0否
+  uint64 devAppId = 4; // 开发者可见的appId
+  string pkgName = 5; // 媒体包名（站点域名）
+  uint32 mediaPlateform = 6; // 媒体平台（Android、快应用、H5）
+  string instantSecretKey = 7; // 秘钥--跳转快应用
+  string instantOrgin = 8; // 快应用orgin
+  string downloadToken = 9; // 	商店分配给APP下载token
+  bool ipWLSwitch = 10; // ip白名单开关
+  string ipWL = 11; // ip白名单(多个ip","分隔)
+  uint32 mediaType = 12; //媒体类别（0：普通媒体，1：代理商（虚拟）媒体）
+  uint32 mediaLevel = 13; // 媒体的一级分类
+  bool auditBlockType = 14;//媒体审核屏蔽
+  uint32 showStyle = 15;//下载样式 半屏下载/全屏下载/等
+  string marketDownDeepLink = 16; // market协议下载跳转链接
+}
+
+///** 广告位基础配置 **/
+message AdPosBasicSetting {
+  uint64 supportPerms = 3;              // 支持的权限,支持的权限，每一位表示一个权限开关,代投：1,deeplink：2,OCPC
+  uint64 forbiddenPerms = 4;            // 禁止的权限，每一位表示一个权限开关,自定义落地页 ：1,快应用 ：2,游戏预约：4,暂时没用上
+  repeated string forbiddenModel = 5;   // 禁止的机型列表
+  uint32 algorithmOn = 6;               // 是否启动算法，1是，0否
+  string algorithmFlowConf = 7;         // 算法流量配置
+  string algorithmModel = 8;            // 算法采用的模块
+  uint32 algorithmInterface = 9;        // 算法使用的接口类型, 0, 1 native,2 h5
+  uint32 showRatio = 10;                // 播放比例
+  uint64 floorBid = 11;                 // 底价（单位：分，保价策略，>0保价，否则不保）
+  uint32 clickDownRatio = 12;           // 支持即点即下的比例
+  uint32 rawAdReturnCount = 13;         // 原生广告吐出条数(客户端返回给开发者广告数量)
+  uint32 adCount = 14;                  // 广告填充数量限制
+  uint32 splashScreenSkipSeconds = 15;  // 开屏跳过时间
+  uint32 splashScreenSkipBtnPos = 16;   // 开屏跳过按钮位置
+  uint32 newUserProtectSeconds = 17;    // 新用户保护时间
+  uint32 reqTimeOutLimitSeconds = 18;   // 请求超时时间
+  uint32 iconMatReplaceSwitch = 19;     // 图标素材替换开关
+  uint32 ecpmFilterDefaultThreshold = 20; // ECPM过滤默认阈值
+  map<uint32, uint32> ecpmFilterApiSourceThreshold = 21; // ECPM过滤各API渠道阈值集合
+  uint32 returnPriceDiscount = 22;      // 回传价格折扣比例(万分制)
+  uint32 immediatelyDownloadRatio = 23; // 即点即下r（立即下载）比例-百分制
+  bool sdkConcurrentReqFlag = 24;       // 并发请求开关--待确认
+  bool frequenceControlSwitch = 25;     // 广告频控开关
+  int32 detailFillType = 26;            // 详情填充类型，0不填充，1填充广告详情，2填充App详情，3填充广告+App详情
+  common.enums.RewardScene rewardScene=27;   //激励视频激励场景
+  bool linkGbClick=28;                  //链接推广全局点击 4
+  bool appGbClick=29;                   //应用推广全局点击 8
+  bool notWifiRemindStyle=30;           //非wifi弹窗 16
+  bool recordShowEvent=31;              //sdk-show统计上报(是否统计show事件)
+  bool ecpmNotFilterSwitch=32;            //ECPM不过滤开关
+  bool removeRepeatAd = 33;               //应用去重 服务端用于app多样性去重，后续移除
+  uint64 programmaticPushLimit = 34;      //品牌PMP最大推量
+  uint64 programmaticExposeLimit = 35;     //品牌PMP最大曝光量
+  string cacheTag = 36; //信息流用，阳波add
+  bool returnPriceSwitch = 37;             //价格回传开关
+  uint32 pullActive = 38;               //应用拉活标识(仅联盟使用)
+  uint32 maxDownloadNums=39;            // 下载最大条数
+  uint32 showDownloadStyle=40;          //是否展示下载通知栏0：不展示 1：展示
+  uint32 endPageStyle=41;	            //结束页显示 0:调整H5落地页 1：播放结束页
+  bool noWifiAutoPlay = 42;             //非wif环境自动播放 0：否 1：是
+  bool openVoiceStyle =43;              //是否开启声音（true:开启）
+  uint32 devCrtType=44;                 //开发者创意,用于判断横屏
+  uint32 vClsBtShowSecond=45;           //视频关闭按钮出现时间
+  bool appNotDistinctSwitch=46;     //服务端用于app多样性去的开关
+  bool installPkgCollectSwitch=47;      //数据收集开关
+  bool conversionBarOpen=48;            //转化条开关
+  bool conversionBarDynamicPopUpOpen=49;//转化条动态弹出开关
+  bool midPagePreloadSwitch=50;         //中间页预加载开关
+  bool adCacheSwitch=51;                //广告缓存开关
+  uint32 adCacheCount=52;               //广告缓存条数
+  uint32 verticalScreenEndPageMoudle=53;//竖屏结束页模板
+  uint32 horizontalScreenEndPageMoudle=54;//横屏结束页模板
+  bool mediaInfoShowOpen=55;            //媒体信息展示开关
+  bool videoDirecChangeSwitch=56;       //sdk视频方向切换开关
+  bool jumpButCustomStyleSwitch=57;     //跳过按钮自定义样式开关
+  uint32 videoPlayDirection=58;         //视频播放方向：1-横屏，2-竖屏
+}
+        //
+///** 广告位创意配置 **/
+message AdPosCreativeConfig {
+  repeated uint32 supportSpec = 3; // 支持推广规格
+  repeated uint32 promotionType = 4 ; // 支持的推广类型
+  common.enums.ShowType showType = 5; // 展示类型
+}
+//
+///** 广告位基础信息 **/
+message AdPosBasicInfo {
+  uint64 id = 1; // 广告位id，如4
+  common.enums.BizType bizType = 3; //广告位归属业务类型
+  uint64 channelId = 4; // 渠道ID
+  uint64 siteId = 5; // 站点ID
+  uint64 pageId = 6; // 页面Id
+  uint32 invalid = 7; // 广告位是否无效，0是，1否
+  uint32 scenesId = 8; //融合场景id，TODO 具体位置待确认
+}
+///** 广告位流量配置 **/
+message AdPosFlowConfig {
+  uint32 supportForceAd = 4; // 是否支持强拉广告.0-否,1-是.
+  common.enums.RecallType recallType = 5; // 召回类型
+  uint32 apiSource = 6; // API渠道来源,如1,1100等
+  uint32 priority = 7; // 优先级，数值越大优先级越高
+  uint32 sortType = 8; // 混合后，相同优先级排序方式，如：0-按ECPM价格排序 TODO 枚举定义
+  uint32 bottomType = 9; // 打底方式.0:非打底流量,1:正常打底流量,2:余量方式 （指定dsp及底价---动态配置）
+  uint32 bottomReqType = 10; // 如果是打底请求，打底的请求方式,0否,即一开始并行请求,1:是，即等首次并行请求完成后再根据结果发起请求 TODO remove
+  uint64 recallTimeoutMillis = 14; // 超时时间
+  uint64 bottomReqTimeThresholdMills = 15; // bottomReqType=1 时，检查当前耗时是否达到限制，如果超过则不走打底流程
+}
+
+/**渠道配置信息*/
+message ApiSourceConf {
+  uint32 apiSource = 1; // API渠道来源,如1,1100等
+  string outPosId = 12; // 外部来源广告位ID
+  string outAppId = 13; // 外部来源媒体ID
+  string ratio = 14; // 渠道流量比例//TODO
+  /**广告位--流量分配--渠道配置**/
+  map<uint32, uint32> downloadType = 15; // 下载方式集合，key：推广方式，value:下载方式
+  map<uint32, uint32> h5DownloadTrigger = 16; // 中间页下载触发方式，key：推广方式，value:中间页下载触发方式
+  map<uint32, uint32> clickActionType= 17; // 【交互方式】点击按钮交互方式，，key：推广方式，value:交互方式
+  map<uint32, uint32> noClickActionType = 18; // 【交互方式】点击非按钮区域交互，key：推广方式，value:交互方式
+  map<uint32, uint32> videoActionType = 19; // 【交互方式】点击视频播放区域交互，key：推广方式，value:交互方式
+  map<uint32, uint32> surferingType = 20; // 落地页打开方式，，key：推广方式，value:交互方式
+  uint64 h5TmplId = 21; // 中间页模板
+  /**sdk版本配置**/
+  uint32 appStoreMinVC = 22; //	应用推广最低商店版本
+  uint32 onePlusAppStoreMinVC = 23; // 应用推广最低一加商店版本
+  uint32 instantPlatformMinVC = 24; // 最低快应用平台版本号
+  repeated string phoneBrand = 25;// 支持手机品牌和机型集合
+  bool dplSwitch = 26; // 支持deepLink推广
+  bool thirdAppDownload = 27; // 支持三方渠道包下载
+  bool wifiAppDownloadLimit = 28; // WI-FI条件下载类广告限制
+  bool wifiVideoLimit = 29; // WI-FI条件激励视频请求限制
+  bool horizonSplashScreen = 30; // 是否支持横屏开屏
+  repeated uint32 supportInstalledActionType = 31; // 安装完成后交互行为集合
+  repeated uint32 supportDownloadType = 32; // 支持的下载方式集合
+  repeated uint32  supportActionType = 33; // 支持的交互方式集合
+  repeated uint32 supportGlobalSpecType = 34; // 支持的创意类型集合
+  bool forbidResetInteraction   =35;//禁止修改交互类型
+  bool isNeedTransferAppInteraction=36;//是否需要将应用推广交互类型传递到Dsp
+  bool adaptiveMaterialSwitch=37;//适配16:9素材开关
+  bool midPageIssueNewTokenSwitch=38;//中间页下发新Token开关
+  bool bannerSupportBSPicSwitch=39;//banner是否支持大小图
+}
+
