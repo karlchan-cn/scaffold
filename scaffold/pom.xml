@@ -37,6 +37,7 @@
         <module>core</module>
         <module>quick-test</module>
         <module>service</module>
+        <module>dal</module>
     </modules>
 
     <!--此处 dependencyManagement 并不会直接引入依赖，是一种懒加载的方式-->
