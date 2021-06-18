@@ -34,7 +34,8 @@ public class MaxHeap<E extends Comparable> {
             k = parentK;
         }
     }
-    private void shiftDown(int k){
+
+    private void shiftDown(int k) {
         // 1.判断当前节点是否有子节点。下沉到叶节点，就没有儿子了，就不用下沉了
         // 注：因为leftChild索引肯定比rightChild小，所以只要有leftChild就有子节点
         while (leftChild(k) < entries.size()) {

@@ -43,7 +43,15 @@
     <!--此处 dependencyManagement 并不会直接引入依赖，是一种懒加载的方式-->
 
     <dependencyManagement>
+
         <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1.1-jre</version>
+                <!-- or, for Android: -->
+                <!--<version>30.1.1-android</version-->
+            </dependency>
             <!-- 接入caffeine -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
