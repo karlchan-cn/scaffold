@@ -14,7 +14,7 @@ public class KLargestElement {
     /**
      * 快速排序算法解题
      */
-    public static final void quickSortAndSelect(){
+    public static final void quickSortAndSelect() {
 
     }
 
