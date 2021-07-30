@@ -5,6 +5,7 @@ import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.spring.context.annotation.DubboComponentScan;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.apache.dubbo.registry.multicast.MulticastRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableDubbo
 @DubboComponentScan
 public class DubboConfig {
-    @Value("${dubbo.inner.registry}")
+    @Value("${dubbo.inner.registry:zookeeper://127.0.0.1:2181?timeout=60000}")
     private String zkInnerAddr;
 
     @Bean
@@ -32,6 +33,7 @@ public class DubboConfig {
         protocolConfig.setThreads(256);
         protocolConfig.setAccepts(128);
         protocolConfig.setIothreads(128);
+        protocolConfig.setPort(25001);
         return protocolConfig;
     }
     //@Bean(value = "httpProtocolConfig")

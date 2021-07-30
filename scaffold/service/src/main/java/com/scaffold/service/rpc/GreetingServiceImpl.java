@@ -11,6 +11,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * greeting interface default implementation.
@@ -19,18 +20,16 @@ import javax.annotation.PreDestroy;
  */
 @Slf4j
 @DubboService(registry = {"innerRegistry"}, group = "${biz.type}.irg", version = "1.0.0", protocol = {"dubbo"},
-        timeout = 200, retries = 0,  actives = 128, executes = 256, delay = -1,connections = 2)
+        timeout = 100, retries = 0, actives = 128, executes = 256, delay = -1, connections = 2)
 public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements GreetingService {
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     @Override
     public String greetingWithOneWord() {
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            log.error("sleeping got error.", e);
-        }
-        log.info("return greeting with hello");
-        return "greeting with hello";
+        final String result = "hello from user:" + COUNTER.getAndIncrement();
+        System.out.println(result);
+        //log.info("return greeting with hello");
+        return result;
     }
 
     @Override

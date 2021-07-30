@@ -2,7 +2,9 @@ package com.scaffold.service.test.rpc;
 
 import com.scaffold.service.rpc.GreetingService;
 import com.scaffold.service.test.conf.TestApplicationConfig;
+import org.apache.dubbo.common.timer.Timer;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.remoting.exchange.support.DefaultFuture;
 import org.apache.dubbo.rpc.RpcContext;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,38 +13,65 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.*;
 
 @Component(value = "GreetingServiceImplTest")
 public class GreetingServiceImplTest {
-    @DubboReference(version = "1.0.0", group = "local.irg", registry = {"innerRegistry"}, async = true,
-            connections = 1, actives = 512,
-            timeout = 2000000, loadbalance = "leastactive", check = false, retries = 0)
+    @DubboReference(async = true, version = "1.0.0", group = "local.irg",
+            connections = 1, actives = 512, url = "dubbo://10.101.129.150:25001",
+            timeout = 500, loadbalance = "leastactive", check = false, retries = 0)
     private GreetingService greetingService;
+
 
     @Before
     public void setUp() throws Exception {
     }
+
 
     /**
      * rpc invoke greeting service
      *
      * @return word from greeting service.
      */
-    public String invokeGreetingService() {
-        int time = 1;
-        Object retulst = null;
+    public String invokeGreetingService() throws IllegalAccessException, InterruptedException, Exception {
+        final ExecutorService executorService = Executors.newFixedThreadPool(512);
+        Map<Long, DefaultFuture> futures = null;
+        Timer timer = null;
+        Field[] fields = DefaultFuture.class.getDeclaredFields();
+        System.out.println(greetingService.greetingWithOneWord());
+        System.out.println(new GreetingServiceCommand(greetingService).queue().get(10000, TimeUnit.MILLISECONDS));
+        //Thread.sleep(60000);
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if ("FUTURES".equals(field.getName())) {
+                futures = (Map<Long, DefaultFuture>) field.get(DefaultFuture.class);
+            } else if ("TIME_OUT_TIMER".equals(field.getName())) {
+                timer = (Timer) field.get(DefaultFuture.class);
+            }
+        }
+        int time = 10000;
+        String retulst = null;
         while (time-- > 0) {
             try {
-                greetingService.greetingWithOneWord();
-                retulst = RpcContext.getContext().getCompletableFuture().get(2000000, TimeUnit.MILLISECONDS);
-                System.out.println(retulst);
-                Thread.sleep(100);
+                final int index = time;
+                executorService.submit(() -> {
+                    try {
+                        System.out.println(" index:" + index + ". " + new GreetingServiceCommand(greetingService).queue().get(200, TimeUnit.MILLISECONDS)
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return retulst.toString();
+        Thread.sleep(10000);
+        System.out.printf("futures 's size:" + futures.size());
+        return retulst;
     }
 
     @After
@@ -50,10 +79,10 @@ public class GreetingServiceImplTest {
     }
 
     @Test
-    public void greetingWithOneWord() {
+    public void greetingWithOneWord() throws IllegalAccessException, Exception {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestApplicationConfig.class);
         context.start();
         final GreetingServiceImplTest greetingServiceImplTest = (GreetingServiceImplTest) context.getBean("GreetingServiceImplTest");
-        Assert.assertTrue(greetingServiceImplTest.invokeGreetingService().equals("greeting with hello"));
+        Assert.assertTrue(("greeting with hello").equals(greetingServiceImplTest.invokeGreetingService()));
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @EnableDubbo(scanBasePackages = {"com.scaffold.service.test.*"})
 public class TestApplicationConfig {
-    @Value("zookeeper://127.0.0.1:2181")
+    @Value("zookeeper://127.0.0.1:2181?timeout=60000")
     private String zkInnerAddr;
 
     @Bean
