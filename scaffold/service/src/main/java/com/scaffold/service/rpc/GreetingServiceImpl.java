@@ -14,13 +14,14 @@ import javax.annotation.PreDestroy;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * vm param:-XX:+UseG1GC -Xmx512M -XX:MaxGCPauseMillis=200 -Xlog:gc*=debug
  * greeting interface default implementation.
  *
  * @author 80166776
  */
 @Slf4j
 @DubboService(registry = {"innerRegistry"}, group = "${biz.type}.irg", version = "1.0.0", protocol = {"dubbo"},
-        timeout = 100, retries = 0, actives = 128, executes = 256, delay = -1, connections = 2)
+        timeout = 100, retries = 0, actives = 12, executes = 11, delay = -1, connections = 2)
 public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements GreetingService {
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
@@ -28,6 +29,11 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
     public String greetingWithOneWord() {
         final String result = "hello from user:" + COUNTER.getAndIncrement();
         System.out.println(result);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            log.error("");
+        }
         //log.info("return greeting with hello");
         return result;
     }

@@ -32,7 +32,6 @@ public class CompletableFutureRunner {
      */
     private static final void completedTimeoutWithDefaultValue() throws ExecutionException, InterruptedException {
         CompletableFuture<Long> longCompletableFuture = getLongCompletableFuture().orTimeout(1000, TimeUnit.MILLISECONDS);
-        ;
         System.out.println("longCompletableFuture.complete:" + longCompletableFuture.complete(1L));
         System.out.println("longCompletableFuture.get():" + longCompletableFuture.get());
     }
@@ -41,21 +40,20 @@ public class CompletableFutureRunner {
         // create a one second timeout future.
         CompletableFuture<Long> longCompletableFuture = CompletableFuture.supplyAsync(() -> {
             long start = System.currentTimeMillis();
-            System.out.println("completedTimeoutWithDefaultValue sleep for 2 seconds begin");
+            System.out.println("completedTimeoutWithDefaultValue sleep for 2000 seconds begin");
             try {
-                Thread.sleep(2000L);
+                Thread.sleep(2000000L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("completedTimeoutWithDefaultValue sleep for 2 seconds ended:" + (System.currentTimeMillis() - start));
+            System.out.println("completedTimeoutWithDefaultValue sleep for 2000 seconds ended:" + (System.currentTimeMillis() - start));
             return 99999L;
         });
         return longCompletableFuture;
     }
 
     private static final void whenCompleteException() {
-        CompletableFuture<Long> longCompletableFuture = getLongCompletableFuture().orTimeout(1000, TimeUnit.MILLISECONDS);
-        ;
+        CompletableFuture<Long> longCompletableFuture = getLongCompletableFuture().orTimeout(1000000L, TimeUnit.MILLISECONDS);
         longCompletableFuture.whenComplete((v, e) -> {
             System.out.println("exception is:" + e);
             System.out.println("value is:" + v);
@@ -70,7 +68,7 @@ public class CompletableFutureRunner {
     }
 
     private static final void thenAccept() throws ExecutionException, InterruptedException {
-        CompletableFuture<Long> longCompletableFuture = getLongCompletableFuture().orTimeout(5000, TimeUnit.MILLISECONDS);
+        CompletableFuture<Long> longCompletableFuture = getLongCompletableFuture().orTimeout(5000000L, TimeUnit.MILLISECONDS);
         longCompletableFuture.thenAccept(value -> System.out.println("thenAccept:" + value)).get();
 
     }

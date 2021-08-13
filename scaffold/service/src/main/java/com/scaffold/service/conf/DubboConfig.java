@@ -30,8 +30,11 @@ public class DubboConfig {
     public ProtocolConfig createProtocolConfig() {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setName("dubbo");
-        protocolConfig.setThreads(256);
-        protocolConfig.setAccepts(128);
+        //
+        protocolConfig.setThreads(32);
+        //
+        protocolConfig.setAccepts(256);
+        // netty worker现成
         protocolConfig.setIothreads(128);
         protocolConfig.setPort(25001);
         return protocolConfig;

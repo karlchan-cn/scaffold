@@ -1,4 +1,4 @@
-package com.scaffold.service.test.rpc;
+package com.scaffold.service.hystrix;
 
 import com.netflix.hystrix.*;
 import com.scaffold.service.rpc.GreetingService;
@@ -15,39 +15,36 @@ import java.util.concurrent.atomic.AtomicInteger;
  * pdb程序化熔断command.
  */
 @Slf4j
-public class GreetingServiceCommand extends HystrixCommand<String> {
+public class HystrixCommand extends com.netflix.hystrix.HystrixCommand<String> {
     /**
      * LOGGER
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GreetingServiceCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HystrixCommand.class);
 
-    private static final HystrixCommandGroupKey COMMAND_GROUP_KEY = HystrixCommandGroupKey.Factory.asKey("ThirdPartyAd");
-    private static final HystrixThreadPoolKey THREAD_POOL_KEY = HystrixThreadPoolKey.Factory.asKey("ThirdPartyAdPool");
+    private static final HystrixCommandGroupKey COMMAND_GROUP_KEY = HystrixCommandGroupKey.Factory.asKey("HystrixGroupKey");
+    private static final HystrixThreadPoolKey THREAD_POOL_KEY = HystrixThreadPoolKey.Factory.asKey("HystrixThreadPool");
     private static final HystrixCommandProperties.Setter COMMAND_PROPERTIES = HystrixCommandProperties.Setter()
             .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD) // 在单独的线程池中执行
             .withCircuitBreakerEnabled(true)            // 打开熔断器
-            .withCircuitBreakerRequestVolumeThreshold(500) // (10s内)请求数达到多大才进行熔断计算 
-            .withExecutionTimeoutInMilliseconds(100)      // 100ms超时
+            .withCircuitBreakerRequestVolumeThreshold(10) // (10s内)请求数达到多大才进行熔断计算
+            .withExecutionTimeoutInMilliseconds(10000)      // 1s超时
             .withCircuitBreakerSleepWindowInMilliseconds(10000)    // 熔断10s后开始探测
             .withCircuitBreakerErrorThresholdPercentage(60)       // 出错率高于该值则熔断
             .withMetricsRollingPercentileEnabled(false)
             .withRequestLogEnabled(false)
             .withRequestCacheEnabled(false);
     private static final HystrixThreadPoolProperties.Setter THREAD_POOL_PROPERTIES = HystrixThreadPoolProperties.Setter()
-            .withCoreSize(64)
-            .withMaximumSize(512)
+            .withCoreSize(1)
+            .withMaximumSize(1)
             .withMaxQueueSize(100000)
             .withAllowMaximumSizeToDivergeFromCoreSize(true);
 
-    private final GreetingService greetingService;
-
-    public GreetingServiceCommand(GreetingService greetingService) {
+    public HystrixCommand() {
         super(Setter.withGroupKey(COMMAND_GROUP_KEY)
-                .andCommandKey(HystrixCommandKey.Factory.asKey("greetingService"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey("hystrixCommand"))
                 .andThreadPoolKey(THREAD_POOL_KEY)
                 .andCommandPropertiesDefaults(COMMAND_PROPERTIES)
                 .andThreadPoolPropertiesDefaults(THREAD_POOL_PROPERTIES));
-        this.greetingService = greetingService;
 
     }
 
@@ -84,19 +81,14 @@ public class GreetingServiceCommand extends HystrixCommand<String> {
 
     @Override
     protected String run() {
-        String result = null;
-        final int executeIdx = EXECUTE_COUNT.incrementAndGet();
+        System.out.println("run start");
         try {
-            greetingService.greetingWithOneWord();
-            result = (String) RpcContext.getContext().getCompletableFuture().orTimeout(100000, TimeUnit.MILLISECONDS).join();
-            //System.out.println("run with result:" + result);
-            if (result != null && result.length() > 0) {
-                EXECUTE_COUNT_SUCCESS.incrementAndGet();
-            }
-        } catch (Exception e) {
-            log.error("execute greeting error with index:{}", executeIdx, e);
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            log.error("sleep error.", e);
+            return "error";
         }
-        return result;
+        return "success";
     }
 
     @Override
