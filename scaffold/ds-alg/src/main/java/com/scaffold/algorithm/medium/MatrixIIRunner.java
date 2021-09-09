@@ -7,7 +7,7 @@ import java.util.Arrays;
  **/
 public class MatrixIIRunner {
     public static void main(String[] args) {
-        new MatrixIIRunner().searchMatrix(new int[][]{{1, 2}, {3, 5}}, 5);
+        System.out.printf("result is :" + new MatrixIIRunner().searchMatrix(new int[][]{{1, 2}, {3, 5}, {4, 6}}, 11));
     }
 
     public boolean searchMatrix(int[][] matrix, int target) {
@@ -17,12 +17,21 @@ public class MatrixIIRunner {
             return result;
         }
         int minRow = 0;
-        int maxCol = matrix.length - 1;
-        int startRow = matrix.length - 1;
-        int startCol = 0;
+        int maxCol = matrix[0].length - 1;
+        int row = matrix.length - 1;
+        int col = 0;
         // 树状遍历
-        while (startRow >= minRow || startCol <= maxCol) {
-
+        while (row >= minRow && col <= maxCol) {
+            int k = matrix[row][col];
+            if (k == target) {
+                return true;
+            }
+            if (k > target) {
+                row--;
+            }
+            if (k < target) {
+                col++;
+            }
         }
         return result;
     }
