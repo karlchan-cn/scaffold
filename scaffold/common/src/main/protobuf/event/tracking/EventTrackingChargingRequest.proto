@@ -1,0 +1,240 @@
+syntax = "proto3";
+package event;
+option java_package = "com.heytap.ad.event.tracking.charging.entity";
+option java_multiple_files = true;
+option java_outer_classname = "EventTrackingChargingRequestProto";
+
+/** 扣费上下文 **/
+message EventTrackingChargingRequest {
+  SystemInfo systemInfo = 1;
+  PosInfo posInfo = 2;
+  AdInfo adInfo = 3;
+  PriceInfo priceInfo = 4;
+  TrackInfo trackInfo = 5;
+  OtherInfo otherInfo = 6;
+  KeywordInfo keywordInfo = 7;
+  // 业务之间没有共性 又没有在扣费业务中使用的直接放这里
+  map<string, string> attachments = 8;
+}
+
+/**数据上报信息*/
+message SystemInfo{
+  string clientIp = 1;            // 客户端ip
+  string imei = 2;                // 客户端imei号
+  string guId = 3;                // 用户全局唯一标识
+  string model = 4;                // 机型
+  string osVersion = 5;            // ColorOs系统版本
+  string romVersion = 6;          // ROM版本名
+  string androidVersion = 7;      // Android系统版本名
+  string sdkVersion = 8;          // SDK版本
+  string channel = 9;             // 渠道
+  string systemId = 10;           // 系统id
+  string ouId = 11;               // 用户广告标识
+  string appVersion = 12;         // 应用版本
+  string networkId = 13;          // 联网方式
+  string clientTime = 14;         // 客户端事件时间
+  string duId = 15;               // 开发者用户标识
+  string ext = 16;                // 预留
+  string dataType = 17;           // 数据类型，如feed_show,feed_click,feed_expose等
+  string eventValue = 18;         // 操作值（如时长、文件大小，由调取方法获取，默认为0）
+  string count = 19;              // 非本地聚合=1， 本地聚合填写
+  string dayNums = 20;            // 当日聚合数据量（客户端聚合）
+  string evtType=21;              //联盟特有
+}
+/** 位置信息 **/
+message PosInfo {
+  string adPosId = 1;             // 广告位ID,分发,信息流,联盟均上报此字段,搜索sc填入此字段 ,分发的格式为 商店前页面/商店当前页面/卡片ID/卡片位置/卡片内位置
+  string preAdPosId = 2;          // 父广告位id 外部入口来源/入口来源二级维度/入口来源三级维度-商店前页面/商店当前页面/卡片ID/卡片位置/卡片内位置
+  string moduleId = 3;            // 模块id 模块，如商店底部的“首页”，“排行榜”等tab
+  string preModuleId = 4;         // 父模块id 一级频道id， 模块跳转时上一个模块的id
+  string adPosInfo = 5;           // 广告位置信息 - 确认信息流是否需要
+  string adWidth = 6;             // 广告宽
+  string adHeight = 7;            // 广告高
+  string adX = 8;                 // 广告在手机上的横坐标
+  string adY = 9;                 // 广告在手机上的纵坐标
+  string downX = 10;              //手机按下坐标值 lm
+  string downY = 11;              // 手机按下坐标值 lm
+  string upX = 12;                 // 手机弹起坐标值  lm
+  string upY = 13;                 // 手机弹起坐标值  lm
+  string clkPos=14;                  //  lm
+  string newPosId=15;               // 统一广告位id
+  string isH5=16;                 //信息流，是否h5点击
+}
+
+/** 广告信息 **/
+message AdInfo {
+  string adId = 1;                // 广告id
+  string adType = 2;              // 广告类型 1 分发 2 搜索
+  string adOwner = 3;             // 广告主id
+  string contentId = 4;           // 内容id 下发的应用id
+  string contentType = 5;         // 内容分类 应用一级分类
+  string planId = 6;              // 计划id
+  string adSource = 7;            // 广告来源 外部渠道，一点，百度。。
+  string campaignType = 8;        // 推广类型编码 1链接推广，2应用推广
+  string specId = 9;              // 规格id 1大图，2小图，3组图
+  string accountId = 10;          // 账户id
+  string dspId = 11;              // 外部广告的dspId
+  string creativityType = 12;     // 创意类型 视频/图片/文字
+  string adGroupId = 13;          // 广告组id
+  string scContent = 14;          // 内容来源 资讯内容源（yidian,toutiao,oppo）
+  string mediaId = 15;            // 标识内容来源，devId为正，mediaId为负
+  string thirdAdId = 16;          // 第三方广告id
+  string thirdMtlId = 17;         // 第三方物料Id
+  string rank = 18;               // 广告排名
+  string openAdId = 19;           // 第三方广告id
+  string openCreativeId = 20;     // 第三方物料id
+  string dpaInfo = 21;            // dpa信息
+  string specialProperty = 22;    // 广告特性:1,强拉  2,取消下载条
+  string pageType = 23;           // 落地页类型
+  string sparkPageId = 24;        // 落地页id
+  string dlChannel=25;            //下载换链 lm
+  //string crtType=26;              // 创意类型 lm  specId
+  string adCat=26;                // 广告类别 lm
+  string aProt=27;                // 广告保位 lm
+
+}
+
+/** 价格信息 **/
+message PriceInfo {
+  string bid = 1;                 // 竞价价格
+  string cost = 2;                // 实际扣费
+  string price = 3;               // 基础出价
+  string ocpcPrice = 4;           // 转化出价
+  string deepOcpcPrice = 5;       // 深度转化出价
+  string billingType = 6;         // 结算类型
+  string ocpcType = 7;            // ocpc类型
+  string ocpcState = 8;           // ocpc阶段
+  string ocpcFactor = 9;          // 控价因子
+  string price2=10;               //联盟CpdDown
+}
+
+/** 跟踪信息 **/
+message TrackInfo {
+  string requestId = 1;
+  string traceId = 2;             // traceid,未解密 v-channel-pos-adId-adType-imei-time-price-billingType-bid-rawBid-ocpcType-ocpcState
+  string pTraceId = 3;            // 跳中间页前的traceId
+  string abtest = 4;              // 业务分流
+  string algorithmId = 5;         // 算法id 算法分流
+  string eventTime = 6;            // 客户端时间 时间戳 毫秒
+  string preEventTime = 7;        // 上一个页面的时间 时间戳
+  string ref1 = 8;                // 归因一级渠道号
+  string trackId = 9;             // 跟踪id - 归因使用
+  string adTrackContent = 10;     // 广告跟踪信息 由商店服务端生成下发 客户端透传
+  string rTraceId = 11;           // 算法traceId
+  string displayTime = 12;        // 服务端时间 毫秒
+}
+
+message KeywordInfo{
+  string keyword = 1;             // 用户输入的关键词 , inputQuery
+  string kw = 2;                  // 经过规整的关键词 , query
+  string rkw = 3;                 // 改写前的关键词
+  string okw = 4;
+  string otype = 5;               // 关键词类型 - 遗留字段
+  int32  kwMatchType = 6;
+  string matchedKw = 7;
+}
+
+/** 其他信息 **/
+message OtherInfo {
+  string requestTime = 1;         // 请求时间
+  string eventValue = 3;          // 操作值 如时长、文件大小等
+  string language = 4;            // 语言
+  string clickType = 5;           // 点击类型
+  string trafficSymbol = 6;           // 服务端实验号
+  string adEnterId = 7;           // 启动入口 调起app，跳转到另外页面
+  string contentChannel = 8;      // channel2 标准频道id，内容
+  string targetId = 9;            // 命中定向id（跟踪） 定向过滤，定投(性别男)
+  string scAppId = 10;            // 广告来源应用 相对应原来公共部分的appId（商店应用维表，应用id，必须上商店上架应用）
+  string scAppVersion = 11;       // 广告来源应用版本 相对应原来公共部分的app_version
+  string experimentId = 12;       // 实验id
+  string flag = 13;               // 当条记录的标记,有标记为是否扣费,或者是事件
+  //TODO 可以不需要,直接网关转换数据
+  string obiz = 14;               // cpd-app-down 帮其他业务接收上报数据的时候使用 obiz和 odata来区分
+  string odata = 15;              // 转发的扣费信息里面的扣费内容
+  string lpu = 16;                  //// 中间页自动跳转标识【1普通自动跳转;2调控的自动跳转;其他：未知】
+  string categoryId = 17;            //广告类别
+  string posType = 18;              //广告位类型
+  string brand = 19; //品牌
+  string abscissa = 20;           // 点击的横坐标
+  string ordinate = 21;           // 点击的纵坐标
+  string pressTime = 22;          // 按压时长
+  string imgId = 23;              // 素材图片id
+  string algSource = 24;          // 算法来源:yidian,toutiao
+  string region = 25;             // 地域
+  string lang = 26;               // 语言
+  string devId = 27;              // 开发者id
+  string algExpId = 28;          // 算法实验id
+  //联盟cpdHDown新增开始
+  string evtId=29;
+  string oprObj=30;
+  string parTabId=31;
+  string tabId=32;
+  string discount=33;
+  string transparent=34;
+  string evtTime=35;
+  string parEvtId=36;
+  string sex=37;
+  string age=38;
+  string modId=39;
+  string oadId=40;
+  string ochn=41;
+  string gaid=42;
+  string checkNo=43;
+  string relate=44;
+  string adTrackContent=45;
+  string parModuleId=46;
+  //联盟cpdHDown新增结束
+  string optKey = 47;             //搜索浏览器场景，点击信息
+  string optValue = 48;           //搜索浏览器场景，点击信息
+  string cheatResponse=49;         //联盟特有，只上报反作弊结果  是否扣费不由它决定
+  string oPosId=50;                //联盟adx点击使用
+  string posSrc=51;                //联盟adx点击使用
+  string  optc=52;                //联盟adx点击使用
+  string  crtId=53;               //联盟adx点击使用
+  string domain=54;               //联盟adx点击使用
+  string mdId=55;                 //联盟adx点击使用
+  string sTagId=56;               //联盟adx点击使用
+  string adAppId=57;              //联盟adx点击使用
+  string contentSize=58;           //联盟使用
+  string clickTransMessage=59;     //联盟使用
+  string clsType=60;               //联盟使用
+  string uSdkVC=61;                //联盟使用
+  string carrier=62;                //联盟使用
+  string valid=63;                  //联盟使用
+  string respId=64;                 //联盟使用
+  string dealRs=65;                 //联盟使用
+  string jumpRet=66;                //联盟使用
+  string instVer=67;                //联盟使用
+  string instSdkVer=68;              //联盟使用
+  string avdType=69;                 //联盟使用 鉴别虚拟机的主要特征
+  string scRespId=70;                 //联盟使用  渠道的响应ID
+  string labId=71;                   //联盟使用  实验ID
+  string prmtId=72;                   //联盟使用  推广ID
+  string phBrand=73;                   //联盟使用  手机品牌
+  string phMaker=74;                   //联盟使用  制造商
+  string oprEnv=75;                    //联盟使用  运行环境
+  string actionType=76;                //联盟使用  交互类型
+  string mPf=77;                       //联盟使用  媒体平台
+  string dAIdFlg=78;                   //联盟使用dspId_adId
+  string actSource=79;                  //联盟使用点击区域区分
+  string userTag=80;                   //联盟使用 用户标签
+  string extFiled=81;                  //联盟使用
+  string experIds=82;                  //联盟使用
+  string stgyIds=83;                   //联盟使用
+  string downFlag=84;                  //联盟使用
+  string extInfo=85;                   //联盟使用
+  string mtId=86;                      //联盟使用
+  string chn=87;                       //联盟使用
+  string tmpId=88;                       //联盟使用
+  string reqPkgName=89;                //请求包名
+  string clickTriTy=90;                //点击的触发类型 (1:用户正常点击 2:代码触发点击 3:前段自动下载触发点击)
+  string rawDuid=91;                   //原始的Duid
+  string a=92;                         //联盟使用 占位 上报设置成0
+  string b=93;                         //联盟使用 占位 上报设置成0
+  string c=94;                         //联盟使用 占位 上报设置成0
+  string d=95;                         //联盟使用 占位 上报设置成0
+  string e=96;                         //联盟使用 占位 上报设置成0
+  string f=97;                         //联盟使用 占位 上报设置成0
+
+
+}

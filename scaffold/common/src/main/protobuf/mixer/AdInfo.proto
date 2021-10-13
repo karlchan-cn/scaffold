@@ -1,0 +1,432 @@
+syntax = "proto3";
+
+import "common/enums/ShowSettingEnum.proto";
+import "common/enums/CommonEnums.proto";
+import "common/ApkSigner.proto";
+package mixer;
+option java_package = "com.heytap.ad.show.mixer.entity";
+option java_multiple_files = true;
+option java_outer_classname = "AdInfoProto";
+
+// 统一请求对象-
+message AdInfo {
+  int64       adId                     = 1;  // 广告ID
+  int64       ownerId                  = 2;  // 广告主Id
+//  int64 accId                        = 3;  // 账户Id
+  string      adName                   = 4;  // 广告名称
+  string      openAdId                 = 5;  // 外部广告Id
+  string      openCreativeId           = 6;  // 外部创意Id
+  Plan        plan                     = 7;  // 计划信息
+  int64       adGroupId                = 8;  // 广告组ID
+  Order       order                    = 9;  // 订单信息
+  int32       globalSpecId             = 10; // 全局规格Id
+  uint32      adType                   = 11;
+  int32       contentType              = 12; // 推广类型【1：链接推广；2：应用推广；3：快应用推广】
+  int32       adSource                 = 13; // 广告来源【1-OPPO,是否考虑使用DSP id作为广告来源】
+  AdMaterial  adSourceLogo             = 15; // 广告来源logo
+  repeated    AdCreative creatives     = 16; // 创意对象集合
+  int64       firstOnlineTime          = 17; // 首次上线时间
+  //  int32 bizSpecId                  = 13; // 业务的specId
+  //  int32 adSpec                     = 14; // 统一的规格Id,后续被globalSpecId替换
+  AdBillingInfo adBillingInfo          = 18; // 广告计费相关对象
+//  repeated int32 tagIdsSet           = 19; // 广告标签对象数组
+//  int64 adSymbol                     = 20; // 广告打标
+//  string adSignKey                   = 21; // 广告签名key
+  common.enums.InteractionType actionType = 21; // 交互类型，如跳转链接、打开商店、打开中间页等
+  //  bool        moveRepeatApp            = 22; // 是否需要在客户端去重
+  bool        forceJsInit              = 23;
+  int64       posId                    = 24; // 当前广告所属广告位-统一广告位
+  int64       parPosId                 = 25; // 父广告位ID/广告位组Id-品牌广告位连投场景
+  string      fullPosId                = 26; // 广告对应的广告位id，请求时带的广告位id
+  string      transparent              = 27; // 透传字段
+  AdShowSetting showSetting            = 29; // 广告播放设置
+  bool        isToppedAd               = 31; // 是否置顶广告
+  string      traceId                  = 32; // traceId
+  string      tkCon                    = 33; // 商店归因的跟踪串
+  string      tkRef                    = 34; // 商店归因的渠道号
+  string      tkId                     = 35; // 商店归因的trackId
+  bool        isAdvertorial            = 36; // 是否软文广告
+//  int32 isDpa = 37;                   // 是否是动态商品广告，0否，1是
+  common.enums.BizType bizType         = 37; // 业务类型.
+  //外部广告召回相关
+  string      dspShowName              = 20; // DSP 展示名称
+//Dsp dsp                              = 22; // DSP信息
+  int64       beginTime                = 38; // 广告开始时间-品牌场景
+  int64       endTime                  = 39; // 广告结束时间-品牌场景
+  int32       limitTimes               = 40; //频次限制
+  int32       limitCircle              = 41; //限频周期【0-不限制(默认),1-全周期,2-周,3-天,3-月】
+  RespSdkConfig respSdkConfig          = 42; //广告SDK响应配置配置
+  string      alPredictInfoUpload      = 43; //算法预测上报(union)
+  int64       returnPrice              = 44; //回传价格(union)
+  string      mediaName                = 45; // 媒体号名称
+  string      timeSet                  = 46; //播放时段-品牌场景
+  int32       apiSource                = 47; // api source
+  PullActive  pullActive               = 48; // 拉取目标应用信息
+  map<string, string> ext              = 28; // 扩展信息
+  int64       brandPosId               = 49; //品牌广告位id
+  common.enums.GameBoxEnum gameBoxType = 50;//盒子广告类型
+  string      brandLogo                = 51;//广告品牌logoUrl
+  string      pageId                   = 52; // 落地页id
+  string      pageType                 = 53; // 落地页type
+}
+
+///**
+//DSP信息对象
+// */
+//message Dsp {
+//  int64 dspId = 1; // DSP ID
+//  string dspShowName = 2; // DSP 展示名称
+//}
+
+/**
+计划信息
+ */
+message Plan {
+    int64   planId        = 1;  // 计划ID
+    string  planName      = 2;  // 计划名称
+    int64   startDate     = 3;  // 计划开始时间
+    int64   endDate       = 4;  // 计划结束时间
+    string  timeSet       = 5;  // 时间段
+    int32   limitTimes    = 6;  // 频次限制
+    int32   limitCircle   = 7;  // 限频周期【0-不限制(默认),1-全周期,2-周,3-天,3-月】
+    int64   totalPrice    = 8;  // 总价
+    int64   brandId       = 9;  // 推广品牌id
+    int64   agentId       = 10; // 代理名称id
+    int64   categoryId    = 11; // 商业类型
+    int64   dspId         = 12; // 第三方dspID,请求展示素材
+    int64   adxType       = 13; // adx类型【0-非adx(默认),1-oppo自有ADX,2-天宫】
+}
+
+/**
+订单信息对象-暂时使用品牌使用.
+ */
+message Order {
+  int64 orderId = 1;// 订单Id
+  int32 orderType = 2;// 订单类型:1-销售订单,2-补量订单,3-测试订单,4-内部订单,5-内部测试订单
+}
+
+// 广告播放配置
+message AdShowSetting {
+  bool showAdLogo = 1;              // 是否展示广告logo
+  int64 countdown = 2;              //读秒时间,ms   1   ---》特有
+  bool showSkipBn = 3;              //是否展示跳过按钮  1---》特有
+  int32 showInterval = 4;           //曝光间隔限制，单位分钟  1---》特有
+  int32 clickInterval = 5;          //点击间隔限制，单位分   1---》特有
+  int32 limitNum = 6;               //原生广告返回条数限制   1---》特有
+  int32 reqInterval = 7;           //客户端同一广告位两次请求间隔最少时间，单位秒---》特有
+  common.enums.PlayMode playMode = 8;              //视频播放模式   ---》特有
+  bool playRemindAtCellular = 9;   //数据网络下播放实时流视频广告是否弹出Dialog提醒;默认提醒
+  common.enums.RewardScene rewardScene = 10;           //激励广告激励的场景
+  bool recordShowEvent = 11;        //是否统计show事件
+  int32 installCompleteAction = 12;   // 安装完成后的动作
+  string buttonName = 13;             // 按钮上的文案，如”查看详情“， ”立即下载“
+  string adLabel = 14;                // 广告标签显示的文案，如”广告“，”XX广告“
+  int32 h5OpenMethod = 15;             //H5应用的打开方式 【0-webview,1-浏览器】-品牌业务定义
+  int32 videoLteCacheable = 16;        //video是否可以在4g下缓存  默认0【0:不允许下载,1:允许下载】-品牌业务定义
+  int32 refreshTime = 17;             // 刷新时间   banner自动刷新时间
+  int32 closeBnStyle = 18;            // 关闭按钮样式
+  int32 endPageStyle = 19;            // 结束页显示 0:调整H5落地页 1：播放结束页
+  bool noWifiAutoPlay = 20;            // //非wif环境自动播放 0：否 1：是
+  bool openVoiceStyle  =21;            //是否开启声音（true:开启）
+  int32 splashScreenButtonPos=22;      //开屏按钮位置 0：右上角1：右下角广告 2:右下角媒体
+  int64 dspId=23;                      //adx
+  int32 autoOpenFlag = 24;             // 下载并打开标识位 0 不支持  1 支持  (信息流应用类)
+  int32 videoOrientation=25;           //视频播放角度 0:跟随传感器 1:横屏 2:竖屏
+}
+
+message AdBillingInfo {
+  int32 billingType = 1;        // 计费类型
+  int32 bid = 2;                // 普通出价
+  int32 bidLevel = 3;           // 出价层级，0广告出价，1广告组出价
+  int32 ocpxBid = 4;            // ocpx转化出价
+  int32 ocpxState = 5;          // ocpx状态
+  int32 ocpxType = 6;           // ocpx转化类型
+  int32 deepOcpxBid = 7;        // 深层ocpcx转化价格
+  int32 deepOcpxType = 8;       // 深层ocpx类型，值参考浅层ocpx类型
+  int32 ocpxOptmType = 9;       // ocpx投放模式：0-单目标，1-双出价
+  int32 chargePrice = 10;       // 扣费价格
+  int64 returnPrice = 11;       //回传价格(union)
+//  int64 statCtrE6 = 11;     // 统计CTR * 10^6
+//  int64 statCvrE6 = 12;     // 统计CVR * 10^6
+//  int64 statEcpmE3 = 13;    // 统计ECPM * 10^3
+//  int32 costType = 14;      // 扣费类型
+//  int32 cvrBid = 15;        // cvr出价
+  int64 predictCtrE6 = 16;    // 预估CTR * 10^6
+  int64 predictCvrE6 = 17;    // 预估CTR * 10^6
+//  int32 predictBid = 19;    // 预估出价
+//  int32 reservePrice = 20;  // 单位分,最低保留价,广告维度配置，兼容日后的价格歧视策略。
+//  int32 quality = 21;       // 质量分
+//  int32 predictOcpxType = 22;     // 算法判断的ocpx转化类型
+//  int32 bidForRankerFail = 23;    // 算法失败时的出价
+//  int32 bidfloor = 24;            // 底价， ADX使用
+    int64 predictEcpmE3 = 25;    // 预估ECPM * 10^3
+}
+
+message AdCreative {
+  int64 creativeId = 1; // 创意ID
+  int32 creativeType = 2;// 创意类型，仅品牌使用，取值同globalSpecId
+  int32 contentType = 3; // 搜索品牌专题用【1：链接推广；2：应用推广；3：快应用推广】
+  string showTitle = 4;//创意文案,兼容广告文案
+  string desc = 5;  // 描述
+  string brandName = 6;//创意品牌名称,类似于广告的title
+  repeated AdMaterial materials = 7;//素材列表,参考下图素材列表
+  string targetUrl = 8;//落地页URL案
+  Instant instant = 9;//快应用对象
+  App app = 10;//App对象
+  Deeplink deeplink = 11;//deeplink对象
+  AdMaterial video = 12;  // 视频信息
+  int64 sparkPageId = 13;//建站页面ID
+  int32 sparkPageType = 14;//建站页面类型
+  int64 templateId = 15;//H5模板Id
+  repeated TrackingInfo tracking = 16; // 监测链接
+  AdMaterial icon = 17;   // icon信息
+  string landingPageUrl = 18; // 目前只有联盟使用
+  int32 itemKind = 19; // 1 -- mainItem 2 -- subItem 其他 -- 也是subItem
+  string clickText = 20; // 点击更多文本
+  int32 visibleTrack = 21; // 可视化监测标识【0-否,1-是】
+  AdAction adAction = 22; // DexView行为对象
+  LandscapeType landscapeType = 23; // 横竖屏类型.【0-无作用,1-横屏,2-竖屏】-参考LandscapeType
+  AdCreativeSetting adCreativeSetting = 24;//创意setting
+  DexViewInfo dexView = 25; //dex view对象
+  repeated BlockingTag blockingTags = 26; //负反馈标签列表
+  string creativeTransparent = 27; // 创意层级透传
+  string middleCreativeTransparent = 28; // 创意层级中间页透传
+  int64       globalSpecId    = 33; //统一规格id
+  int32       combinationType = 34; //创意组合类型.【0-单创意(默认),1-信息流专题,2-锁屏组图,3-互动视频】
+  int32       isShowLogo      = 35; //是否展示logo【0-展示(默认),1-不展示】
+  int32       countDown       = 36; //播放时长（毫秒）
+  int32       isVisualMonitored   = 37; //该创意是否使用可视化监控复选框【0-否(默认),1-是】
+  int32       isAdvertorial   = 38; //是否软文【0-否(默认),1-是】
+  int32       zipType         = 39; //zip包类型【1-zip场景,2-zip视频,3-zip全景,4-zip动图】
+  string      zipUrl          = 40; //zip包地址 
+  string      zipMd5          = 41; //zip包文件md5
+  string      copyrightDesc   = 42; //版权信息
+  int32       ifLightShow     = 43; //是否亮屏展示【0-否(默认),1-是】
+  int64       mediaShowEndTime= 44; //媒体号展示截至时间（秒）
+  int64       adxCreativeId   = 45; //adx创意Id
+  string      openCrId        = 46; //外部创意Id
+  int32       isTopped        = 47; //是否置顶【0-否(默认),1-是】
+  string      downLoadUrl      =48;//gateway使用（union）
+  uint32  maxDownloadNums      =49;// 下载最大条数（union）
+  uint32 showDownloadStyle     =50;//是否展示下载通知栏0：不展示 1：展示（union）
+  bool  notWifiRemindStyle     =51;//非wifi弹窗 16（union）
+  int32  filterFlags           =52; //广告过滤条件标识组合，使用FilterFlag做二进制组合，为0标识不做任何过滤（union）
+  bool interactionGlobalEffect  =55;//中间态
+  common.enums.InteractionType appInteractionLimit  =56;//中间态
+  string  downLoaderUrl         =57;//下载器下载时的url
+  string  buttonTitle           =58;//按钮文案
+  string  midJsonUrl            =59;//中间页json地址，保存了中间页预加载前端js相关信息
+  int32   imgType               =60;//素材新比例type 1：16_8比例 2：16_9比例
+  WechatApplet wechatApplet     =61;// 微信小程序
+}
+
+// 微信小程序
+message WechatApplet {
+    string  wechatAppletId     = 1;    // 微信小程序Id
+    string  wechatAppletPath   = 2;    // 微信小程序path
+}
+
+message TrackingInfo {
+  uint32 type = 1;          // 监测链接类型
+  repeated string url = 2;  // 监测链接
+}
+
+message AdMaterial {
+  int64 mId = 1;//素材Id
+  string materialUrl = 2;//素材URL
+  string openMaterialId = 3;//外部素材Id
+  int32 width = 4;//素材宽度
+  int32 height = 5;//素材高度
+  int32 type = 6;//素材类型【1-图片,2-视频,3-通用素材】
+  int32 size = 7;//素材大小
+  string md5 = 8;//素材md5
+  string webpMd5 = 9;//webp素材Md5
+  string compressedMd5 = 10;//压缩素材Md5
+  string compressedUrl = 11;//压缩视频的url
+  string compressedSize = 12;//压缩后素材大小
+  int32 duration = 13;//素材长度。精确到毫秒
+  repeated string videoConf = 14;  // 视频配置
+  int32 videoStyle = 15;		// 视频样式：0:顶部展示广告+广告H5，1:视频在H5内
+  int32 showOffBnTime = 16; // 展示关闭按钮时间 单位秒
+  string aspectRatio         = 17;   // 素材比例
+  string imgFingerprint      = 18;   // 图片指纹
+}
+
+message AdCreativeSetting {
+  bool gbClick = 1 ;                          // 是不是全图片可点击
+  string traceId = 2;                         // 数据监测跟踪ID
+  string dlChannel = 3;                       //下载换链渠道   //标注：adx用
+  int32 showOffBnTime = 4;                   //视频播放过程中开始展示关闭按钮的时间，单位秒
+  string landingPageUrl = 5;                  //视频广告播放完毕落地页
+  common.enums.SurfingType surfingType = 6;                //url的打开方式，可以选择采用SDK自带的Webview或者系统浏览器打开
+  bool gbClickToast = 7;                     //Toast是否可以全局点击；默认全局点击
+  common.enums.TipBarType tipBarType = 8;                  //视频广告底部提醒条样式
+  int32 rewardLimitTime = 9;                //奖励限制时间间隔、单位分钟
+  common.enums.InstallCompleteAction installCompleteAction = 10; //应用安装完成后的操作
+  common.enums.InstalledAction installedAction = 11;       //配置应用下载类推广，已安装的情况下的点击响应方式，NO_ACTION的情况下不展示
+  common.enums.InteractionType btnActionType = 12;      //广告按钮区域点击跳转类型
+  common.enums.InteractionType extraActionType = 13;      //配置广告按钮区域外点击跳转类型
+  common.enums.InteractionType videoActionType = 14;       //配置广告视频播放区域点击跳转类型
+  common.enums.DownloadStyle downloadStyle=15;             //下载方式
+  common.enums.DownloadStyle h5DownloadStyle=16;             //中间页下载方式
+  bool removeRepeatAd = 17;                                //安装去重
+  bool h5ImmediateDL=18;                                   //h5是否立即下载
+  bool filterInstalledAdSwitch = 19;                        //安装后是否去重开关
+  bool mediaInfoShowOpen=20;                    //是否展示媒体信息
+  int32 portEndPageModelType=21;                //竖屏结束页模板类型
+  int32 landEndPageModelType=22;                //横屏结束页模板类型
+  bool  isShowConvertBar=23;                    //是否展示转化条
+  bool isDynamicPopUpConvert = 24;              //是否动态弹出转化条
+
+}
+/**
+广告SDK响应配置配置
+ */
+message RespSdkConfig{
+  int32 coldStartPullMatInterval                = 1;      //冷启动拉取素材间隔时间
+  int32 offlineRepeatRequestInterval            = 2;      // 离线接口重复请求间隔，单位为秒
+  string templateUrl                            = 3;	  // 广告对应的模板url
+  string templateMd5                            = 4;	  // 模板url对应的md5
+  string templateData                           = 5;	  // 模板需要的数据内容（json）
+}
+
+message Instant {
+  int64 instantId = 1;//快应用Id
+  string instantUrl = 2;//快应用Url
+//  int32 minPlatVersion = 3;//最低快应用平台版本
+  string pkgName = 5;//包名
+//  int32 pkgSize = 6;//包大小  字节
+//  CategoryInfo catInfo = 7;//对象的分类信息
+
+   string origin = 6; //当前应用对应的Instant origin.
+   string secret = 7; //当前应用对应的Instant secret.
+   string instantName = 8; //快应用Name
+   string  instantDesc = 9;    //instant描述
+}
+
+message App {
+  int64     appId       = 1;  // AppId
+  string    appName     = 2;  // App名称
+  string    appChannel  = 3;  // app渠道
+  AppDetail appDetail   = 4;  // App详情
+  string    pkgName     = 5;  // 包名
+  int64     pkgSize     = 6;  // 包大小  字节
+  uint32    cateId      = 7;  // 一级分类
+  uint32    subCateId   = 8;  // 二级分类
+  uint32    thirdCatId  = 9;  // 三级分类
+  repeated  string midImageList    = 10;     //中间页预加载app图片地址
+  string    appDesc                = 11;       //app描述
+}
+
+message AppDetail {
+  bytes   verName = 1;             // 版本名称
+  uint64  verCode = 2;             // 版本编码
+  uint64  verId = 3;               // 版本ID
+  bytes   appName = 4;             // 应用名称
+  bytes   statCode = 5;            // 统计code，只有应用下载时该值有效
+  uint64  size = 6;                 // 安装包大小
+  bytes   sizeDesc = 7;            // 安装包大小描述
+  uint32  gradeCount = 8;          // 评分数
+  float   grade = 9;                // 平均评分
+  uint64  downloadCount = 10;      // 下载量
+  bytes   downloadDesc = 11;        // 下载量描述
+  bytes   iconUrl = 12;             // 图标地址
+  bytes   downloadUrl = 13;         // 下载地址
+  bytes   backgroundUrl = 14;        // 背景地址
+  repeated bytes  pics = 15;         // 截图
+  bytes   detailDesc = 16;           // 详情描述 对应detail_desc
+  float   favorRadio = 17;           // 好评率
+  bytes   oneWordDesc = 18;        // 简单描述
+  int64   releaseTime = 19;        // 发布时间
+  bytes   updateDesc = 20;         // 更新描述
+  bytes   typeName = 21;          // 类型名称
+}
+
+message CategoryInfo {
+  uint32    cateId = 1;       //一级分类
+  uint32    subCateId = 2;    //二级分类
+  uint32    thirdCateId = 3;  //三级分类
+  uint32    fourthCateId = 4; //四级分类
+}
+
+message Deeplink {
+  string deeplinkUrl = 1;//DeepLink地址
+  string pkgName = 2;//包名
+//  int32 pkgSize = 3;//包大小  字节
+//  CategoryInfo catInfo = 4;//对象的分类信息
+}
+
+//message Owner {
+//  CategoryInfo cateInfo = 1;//行业分类对象
+//}
+
+//message PromotionResource {
+//  string pkgName = 1;//包名
+//  int32 pkgSize = 2;//包大小  字节
+//  CategoryInfo catInfo = 3;//对象的分类信息
+//}
+
+//message DpaInfo {
+//  string dpaSource = 1;//dpa来源
+//  int32 stateType = 2;//dpa来源
+//  repeated string  dpaCategories = 3;//分类数组
+//  repeated int32  dpaTemplateIds = 4;//分类数组
+//}
+
+/**
+广告点击行为-主要是浏览器DexView项目，后续已经废弃
+ */
+message AdAction {
+  int32 type = 1; // 交互类型，1信息提交，2拨打电话，3发送短信,4游戏预约
+  string number = 2; // 若type=2则为电话号码，若type=3则为短信接收方号码
+  string content = 3; //若type=1则为url， 若type=3则为短信发送内容 若type=4则为游戏预约时传递给sdk的url (encode之后）
+}
+
+/**
+浏览器正式版的DexView对象.
+ */
+message DexViewInfo {
+  string bundleId = 1; // 插件Id
+  int32 versionCode = 2; // 插件版本号,数字类型
+  string data = 3; // JSON内容
+  int32 minCltVer = 4; // 最小app版本号
+  int32 maxCltVer = 5; // 最大app版本号
+}
+/**
+负反馈标签对象
+ */
+message BlockingTag {
+  int32 id = 1; //标签id
+  string name = 2; //标签名称
+  string desc = 3; //描述
+  string transparent = 4; //透传字段
+  repeated BlockingTag tags = 5; //标签列表
+}
+/**
+保活信息对象
+ */
+message PullActive {
+  string pkgName = 1; // 拉起目标应用包名
+  int32 minAppVer = 2; // 拉起目标最小版本号
+  common.ApkSigner apkSigner = 3; // 拉起目标签名信息
+  string target = 4; // 拉起目标进程信息
+}
+
+/**
+横竖屏类型枚举
+ */
+enum LandscapeType{
+  LANDSCAPE_DEFAULT = 0; //无横竖屏配置
+  PORTRAIT = 1; // 竖屏.
+  LANSCAPE = 2; // 横屏.
+}
+/**
+DexView类型.
+ */
+enum AdActionType{
+  TYPE_DEFAULT = 0; //无行为
+  TYPE_FORM_INPUT = 1; // 表单提交.
+  TYPE_DIAL_NUMBER = 2; // 拨打电话.
+  TYPE_SEND_MSG = 3; // 发送短信.
+  TYPE_GAME_RESERVATION = 4; // 游戏预约.
+}

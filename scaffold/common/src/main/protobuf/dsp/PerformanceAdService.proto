@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "dsp/DspAdRequest.proto";
+import "dsp/DspAdResponse.proto";
+package dsp;
+
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.dsp.service";
+option java_outer_classname = "IAdPerformanceServiceProto";
+
+/** 效果引擎请求服务 **/
+service IAdPerformanceService {
+  /**
+  *接口请求方法
+  */
+  rpc reqAdList(dsp.DspAdRequest) returns(dsp.DspAdResponse);
+}

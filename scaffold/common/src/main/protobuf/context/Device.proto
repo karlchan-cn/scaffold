@@ -1,0 +1,54 @@
+syntax = "proto3";
+option java_multiple_files = true;
+import "common/enums/CommonEnums.proto";
+import "common/Geo.proto";
+package context;
+option java_package = "com.heytap.ad.show.context.entity";
+option java_outer_classname = "DeviceProto";
+
+/** 设备对象 **/
+message Device {
+  string imei                                 = 1; //imei设备号
+  string imeiMd5                              = 2; // md5的adnroid id
+  string anId                                 = 3; //	安卓ID
+  string anIdMd5                              = 4; //  md5的android id
+  string ouId                                 = 5; // ouId状态匿名设备标识符（Open Anonymous Device）,对应外部oaId
+  bool ouIdStatus                             = 6; // ouId状态
+  string duId                                 = 7; // 对应外部vaId
+  string gaId                                 = 8; // 对应google Id
+  string guId                                 = 9; // 对应外部udId
+  string mac                                  = 10; //mac地址
+  string macMd5                               = 11; // md5的mac
+  string idfa                                 = 12; // IOS平台用户标识
+  string idfaMd5                              = 13; // md5的IOS平台用户标识
+  string ua                                   = 14; // 设备浏览器的user agent
+  string ipv4                                 = 15; // IPv4
+  string ipv6                                 = 16; // IPv6
+  string colorOsv                             = 17; // color os version
+  string romV                                 = 18; // rom verion
+  string anVer                                = 19; // android version
+  int32 h                                     = 20; // 屏幕高度
+  int32 w                                     = 21; // 屏幕宽度
+  int32 ppi                                   = 22; //像素密度
+  common.enums.ConnectionType connectionType  = 23; //网络链接类型
+  int64 linkSpeeed                            = 24; // 网络连接速度,精确到byte
+  common.enums.OperatorType carrier           = 25;// 运营商类型
+  int32 ori                                   = 26; //屏幕旋转角度:0~36
+  string brand                                = 27; //手机品牌,大写字母
+  string country                              = 28; // 国家
+  string language                             = 29; // 使用语言
+  string region                               = 30; // 地区属性
+  string model                                = 31; // 机型
+  common.Geo geo                              = 32; // 用户当前位置信息
+  string searchEngine                         = 33; // 搜索引擎
+  bool horizontalScreen                       = 34; // 是否横屏
+  AppStoreInfo appStoreInfo                   = 35; // 当前设备软件商店信息
+  string mkDuId                               = 36; // 商店的duId
+  string serialId                             = 37; // 主板序列号
+}
+
+/** 软件商店信息 **/
+message AppStoreInfo {
+  string verName                           = 1;            // 商店版本名称
+  int32 verCode                            = 2;             // 商店的版本号
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package experiment;
+option java_package = "com.heytap.ad.show.experiment.entity";
+option java_multiple_files = true;
+option java_outer_classname = "ExperimentProto";
+
+/** 实验定义对象 **/
+message Experiment {
+  int32 hitedDomainType = 1;                      // 命中的实验域
+  map<string, ExpItemDetail> expCodeInfoMap = 2;  // key(expCode)实验code,value-命中的实验信息
+  map<string, string> subSvcExpIds = 3;           // 下游服务实验id,key实验id,value实验组id
+}
+
+/** 实验itemInfo **/
+message ExpItemDetail {
+  string expId = 1;         // 实验ID
+  string expItemId = 2 ;    // 实验item Id
+  string expCode = 3;       // 实验code
+  string layerId = 4;       // 当前实验所属的layerId
+  string layerCode = 5;     // 实验层code
+}

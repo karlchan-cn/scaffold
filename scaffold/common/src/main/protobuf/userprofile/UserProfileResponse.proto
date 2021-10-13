@@ -1,0 +1,84 @@
+syntax = "proto3";
+import "context/Device.proto";
+package userprofile;
+option java_package = "com.heytap.ad.show.userprofile.entity";
+option java_multiple_files = true;
+option java_outer_classname = "UserProfileResponseProto";
+
+/** 用户画像返回对象 **/
+message UserProfileResponse {
+    int32 code                                  = 1; // 返回编码，0成功，其他失败
+    string msg                                  = 2; // 返回信息
+    UserProfile userProfile                     = 3; // 用户画像
+}
+
+/** 用户画像对象 **/
+message UserProfile {
+    string imei                                 = 1; //IMEI
+    UserBehavior behaviour                      = 2; //行为
+    UserPortrait portrait                       = 3; //画像
+    UserBasicInfo basicInfo                     = 4; //基本信息
+    UserAudienceInfo audienceInfo               = 5; //人群包
+}
+
+/** 用户行为 **/
+message UserBehavior {
+    map<uint64, uint64> installedApp            = 1; // 已安装APP, k->appId, v->yyyyMMddHHmmss
+    repeated uint64 yesterdayInstalledApp       = 2; // 前一天已安装APP
+    map<uint64, uint64> addedInstant            = 3; // 快应用已添加到桌面, k->instantId, v->yyyyMMddHHmmss
+    map<uint64, uint64> appActive               = 4; // 应用活跃, k->appId, v->yyyyMMddHHmmss
+    map<uint64, uint64> appUninstall            = 5; // 应用卸载, k->appId, v->yyyyMMddHHmmss
+    repeated uint64 appActiveCategory           = 6; // 应用活跃分类
+    repeated uint64 convertedAdId               = 7; // 已转化广告ID列表
+    repeated uint64 convertedGroupId            = 8; // 已转化广告组ID列表
+    repeated uint64 convertedPlanId             = 9; // 已转化广告计划ID列表
+    repeated uint64 convertedOwnerId            = 10; // 已转化广告主ID列表
+    repeated uint64 preInstalledApp             = 11; // 预装APP列表
+}
+
+/** 用户画像 **/
+message UserPortrait {
+    uint32 age                                  = 1; // 年龄 1:<18,2:18-24,3:25-29,4:30-34,5:35~49,6:>=50
+    uint32 gender                               = 2; // 性别，0未知，1女，2男
+    uint32 activeDay                            = 3; // 用户激活日期，yyyyMMdd
+    int32 permanentProvinceId                   = 4; // 常驻地-省id
+    int32 permanentCityId                       = 5; // 常驻地-市id
+    int32 yesterdayProvinceId                   = 6; // 前一天当前地-省id
+    int32 yesterdayCityId                       = 7; // 前一天当前地-市id
+    int32 yesterdayRegionVer                    = 8; // 前一天当前地信息版本号，格式：yyyyMMdd
+    repeated uint32 interestTag                 = 9; // 兴趣标签
+    map<uint64, uint64> interestTagV2           = 10; // 新版兴趣标签, k->tagId, v->score
+    repeated int32 userEmb                      = 11; // 用户emb（广告组层级）
+    int32 embVer                                = 12; // 用户emb版本号（广告组层级）
+    repeated int32 userAdEmb                    = 13; // 用户emb(广告层级)
+    int32 embAdVer                              = 14; // 用户emb版本号(广告层级)
+}
+
+/** 用户基本信息 **/
+message UserBasicInfo {
+    string modelName                            = 1;  // 机型名称，eg：PCAM00
+    string modelSeries                          = 2;  // 机型系列，eg：RENO3
+    string modelFamilySeries                    = 3;  // 家族系列，eg：RENO
+    string modelMarket                          = 4;  // 营销名称，eg：RENO3 PRO
+    int32 modelWidth                            = 5;  // 宽度
+    int32 modelHeight                           = 6;  // 高度
+    int32 modelPrice                            = 7;  // 机型价格
+    int32 cityId                                = 8;  // 城市ID
+    string city                                 = 9;  // 城市名
+    int32 provinceId                            = 10; // 省ID
+    string province                             = 11; // 省名
+    int32 countryId                             = 12; // 国家ID
+    string country                              = 13; // 国家名
+    string weatherCode                          = 14; // 天气编码
+    int32 brandCityId                           = 15; // 品牌专用-城市ID
+    string brandCity                            = 16; // 品牌专用-城市名
+    int32 brandProvinceId                       = 17; // 品牌专用-省ID
+    string brandProvince                        = 18; // 品牌专用-省名
+    int32 brandCountryId                        = 19; // 品牌专用-国家ID
+    string brandCountry                         = 20; // 品牌专用-国家名
+}
+
+/** 人群 **/
+message UserAudienceInfo {
+    repeated string audienceId                   = 1; // 人群包ID集合,即该用户被哪些人群包引用
+}

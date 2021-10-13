@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package frequence;
+option java_package = "com.heytap.ad.show.frequence.entity";
+option java_multiple_files = true;
+option java_outer_classname = "FrequenceAdInfoProto";
+
+/** 频控AD信息对象 **/
+message FrequenceAdInfo {
+  string adId                           = 1; // adId
+  int64 ownerId                         = 2; // 广告主ID
+  int64 appId                           = 3; // 推广APPID
+  int64 planId                          = 4; // 计划ID
+  int64 groupId                         = 5; // 广告组ID
+  /*品牌相关*/
+  int64 orderId                         = 6; // 订单ID
+  int64 scheduleId                      = 7; // 排期ID
+
+  /*其他*/
+  string deepLink                       = 9; // DeepLink
+  int32  adSpec                         = 10; // 广告规格
+  repeated string imgFingerprint        = 11;// 素材图片指纹信息
+  int32 adForceType                     = 12; //广告强拉类型（联盟根据不同类型进行频次限制）
+}

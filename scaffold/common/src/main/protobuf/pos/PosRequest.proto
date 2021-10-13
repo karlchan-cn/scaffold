@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+import "context/Header.proto";
+import "common/enums/CommonEnums.proto";
+package pos;
+option java_multiple_files = true;
+option java_package = "com.heytap.ad.show.common.pos.entity";
+option java_outer_classname = "PosRequestProto";
+
+/** 广告位信息请求对象 **/
+message PosRequest {
+  context.Header header = 1;//common结构
+  repeated uint64 posId = 2;//广告位id列表
+  uint64 appVersionCode = 3;// version code,数值类型版本号
+  uint32 sdkVersionCode = 4; // sdk版本号
+  uint32 accessType = 5;  //流量接入方式（如SDK、API、RTB等方式）//联盟专用
+  int32 channelId  = 6;   // 频道id，信息流专用
+  int32 swipeCount = 7;   // 轮刷数，信息流专用
+  repeated int32 supportGlobalSpecId = 8; //客户端上传的支持的规格；最终返回结果是与服务端支持的规格取交集
+  repeated int32 supportTypes = 9; //客户端上传的支持的推广类型；最终返回结果是与服务端支持的推广类型取交接
+  map<string, string> ext = 10;       // 扩展信息
+  common.enums.BizType bizType = 11; //广告位归属业务类型,一期用以处理不同业务逻辑，后续统一广告位后可以去掉
+  uint32 queryType = 12; // 查询类型，0：默认查询所有信息，1：只查询广告位基础信息
+
+
+}
+
+enum QueryType {
+  ALL = 0; // 默认查询所有
+  ONLY_BASIC = 1; // 只查询基础信息
+  INFO_AND_SETTING = 2; // 查询basicInfo和basicSetting
+}
+
