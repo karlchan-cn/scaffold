@@ -2,10 +2,10 @@ package com.scaffold.service.test.rpc;
 
 import com.scaffold.service.rpc.GreetingService;
 import com.scaffold.service.test.conf.TestApplicationConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.timer.Timer;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.remoting.exchange.support.DefaultFuture;
-import org.apache.dubbo.rpc.RpcContext;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,9 +18,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 @Component(value = "GreetingServiceImplTest")
+@Slf4j
 public class GreetingServiceImplTest {
     @DubboReference(async = false, version = "1.0.0", group = "local.irg",
             connections = 1, actives = 512, url = "dubbo://10.101.129.150:25001",
@@ -63,13 +64,14 @@ public class GreetingServiceImplTest {
 //        }
 //        Thread.sleep(1000000);
     }
-
     /**
      * rpc invoke greeting service
      *
      * @return word from greeting service.
      */
     public String invokeGreetingService() throws Exception {
+        log.error("error for 1234", new Throwable("throw"));
+        log.error("error for %d",100L);
         Map<Long, DefaultFuture> futures = null;
         Timer timer = null;
         Field[] fields = DefaultFuture.class.getDeclaredFields();

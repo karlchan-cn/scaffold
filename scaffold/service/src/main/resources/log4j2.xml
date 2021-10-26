@@ -8,59 +8,11 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
         </Console>
-        <!--        <RollingFile name="default" fileName="${sys:log.base.dir}/${sys:instance_id}/${sys:dubbo.protocol.port}.log"-->
-        <!--                     filePattern="${sys:log.base.dir}/${sys:instance_id}/${sys:dubbo.protocol.port}-%d{yyyyMMdd}-%i.log.gz">-->
-        <!--            <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>-->
-        <!--            <Policies>-->
-        <!--                <TimeBasedTriggeringPolicy/>-->
-        <!--                <SizeBasedTriggeringPolicy size="300 MB"/>-->
-        <!--            </Policies>-->
-        <!--            <DefaultRolloverStrategy max="30">-->
-        <!--                <Delete basePath="${sys:log.base.dir}/${sys:instance_id}" maxDepth="2">-->
-        <!--                    <IfLastModified age="7d"/>-->
-        <!--                </Delete>-->
-        <!--            </DefaultRolloverStrategy>-->
-        <!--        </RollingFile>-->
-        <!--        <RollingFile name="statAppender" fileName="${sys:log.base.dir}/${sys:instance_id}/stat-${sys:dubbo.protocol.port}.log"-->
-        <!--                     filePattern="${sys:log.base.dir}/${sys:instance_id}/stat-${sys:dubbo.protocol.port}-%d{yyyyMMdd}-%i.log.gz">-->
-        <!--            <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>-->
-        <!--            <Policies>-->
-        <!--                <TimeBasedTriggeringPolicy/>-->
-        <!--            </Policies>-->
-        <!--            <DefaultRolloverStrategy>-->
-        <!--                <Delete basePath="${sys:log.base.dir}/${sys:instance_id}" maxDepth="2">-->
-        <!--                    <IfLastModified age="7d"/>-->
-        <!--                </Delete>-->
-        <!--            </DefaultRolloverStrategy>-->
-        <!--        </RollingFile>-->
-        <!--error logging-->
-        <!--        <RollingFile name="error" fileName="${sys:log.base.dir}/${sys:instance_id}/error-${sys:dubbo.protocol.port}.log"-->
-        <!--                     filePattern="${sys:log.base.dir}/${sys:instance_id}/error-${sys:dubbo.protocol.port}-%d{yyyyMMdd}-%i.log.gz">-->
-        <!--            <PatternLayout-->
-        <!--                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>-->
-        <!--            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>-->
-        <!--            <Policies>-->
-        <!--                <TimeBasedTriggeringPolicy/>-->
-        <!--                <SizeBasedTriggeringPolicy size="300 MB"/>-->
-        <!--            </Policies>-->
-        <!--            <DefaultRolloverStrategy max="30">-->
-        <!--                <Delete basePath="${sys:log.base.dir}/${sys:instance_id}" maxDepth="2">-->
-        <!--                    <IfLastModified age="7d"/>-->
-        <!--                </Delete>-->
-        <!--            </DefaultRolloverStrategy>-->
-        <!--        </RollingFile>-->
-
-        <!--        <Http_oppo name="http"/>-->
-        <!--        <Async name="defaultAsync">-->
-        <!--            <AppenderRef ref="default"/>-->
-        <!--            <AppenderRef ref="http"/>-->
-        <!--        </Async>-->
-
         <RollingFile name="info" fileName="scaffold.log"
                      filePattern="scaffold-%d{yyyyMMdd}-%i.log.gz">
             <PatternLayout
                     pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
-            <LevelRangeFilter minLevel="info" maxLevel="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <LevelRangeFilter minLevel="debug" maxLevel="info" onMatch="ACCEPT" onMismatch="DENY"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="300 MB"/>
@@ -73,12 +25,12 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="ExecutorStatPool" level="debug">
-            <AppenderRef ref="statAppender"/>
-        </Logger>
-        <Root level="debug">
+<!--        <Logger name="ExecutorStatPool" level="debug">-->
+<!--            <AppenderRef ref="statAppender"/>-->
+<!--        </Logger>-->
+        <Root level="info">
             <AppenderRef ref="console"/>
-            <AppenderRef ref="info"/>
+<!--            <AppenderRef ref="info"/>-->
         </Root>
     </Loggers>
 </Configuration>
