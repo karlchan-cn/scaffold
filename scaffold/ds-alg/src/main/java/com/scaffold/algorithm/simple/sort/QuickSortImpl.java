@@ -49,6 +49,9 @@ public class QuickSortImpl {
      * @param to
      */
     private void swap(int[] nums, int from, int to) {
+        if(from == to) {
+            return;
+        }
         int tmp = nums[to];
         nums[to] = nums[from];
         nums[from] = tmp;

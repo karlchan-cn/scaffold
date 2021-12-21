@@ -37,3 +37,4 @@ Thumbs.db
 
 #flatten
 .flattened-pom.xml
+/result.json
