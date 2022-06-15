@@ -1,4 +1,4 @@
-package com.scaffold.disruptor;
+package com.scaffold.highperformance;
 
 /**
  * 测试cacheline效果.
