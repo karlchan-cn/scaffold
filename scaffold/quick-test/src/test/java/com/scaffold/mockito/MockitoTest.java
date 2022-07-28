@@ -1,33 +1,34 @@
 package com.scaffold.mockito;
 
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import com.google.common.base.Stopwatch;
+        import org.junit.Rule;
+        import org.junit.Test;
+        import org.junit.runner.RunWith;
+        import org.mockito.*;
+        import org.mockito.invocation.InvocationOnMock;
+        import org.mockito.junit.MockitoJUnit;
+        import org.mockito.junit.MockitoRule;
+        import org.powermock.api.mockito.PowerMockito;
+        import org.powermock.core.classloader.annotations.PrepareForTest;
+        import org.powermock.modules.junit4.PowerMockRunner;
 
+        import java.util.ArrayList;
+        import java.util.List;
+        import java.util.function.Function;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+        import static org.junit.Assert.assertEquals;
+        import static org.junit.Assert.assertNotNull;
+        import static org.mockito.BDDMockito.given;
+        import static org.mockito.Mockito.*;
 
 //
 
 /**
- *  Mockitto测试demo,
- *  主要内容参考
- *   @see <a href="https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html">mockito</a>
+ * Mockitto测试demo,
+ * 主要内容参考
+ *
+ * @see <a href="https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html">mockito</a>
  * @see <a href="https://github.com/powermock/powermock/wiki/Mockito">powermock</a>
  */
 //@RunWith(MockitoJUnitRunner.class)
@@ -45,7 +46,7 @@ public class MockitoTest {
     private InnerService service;
 
     @Mock
-    private Function<String,String> function;
+    private Function<String, String> function;
 
     @Test
     public void staticMethodMock() {
@@ -56,10 +57,16 @@ public class MockitoTest {
 
     private static class InnerService {
 
-        public InnerService(Function<String,String> func){
+        public InnerService(Function<String, String> func) {
             this.functionField = func;
         }
-        private Function<String,String> functionField;
+
+        /**
+         * 1. {"flag":true}--
+         * 2. {"flag":false} ---
+         * 这个就是中间件.
+         */
+        private Function<String, String> functionField;
     }
 
     @Test
@@ -69,23 +76,7 @@ public class MockitoTest {
         assertEquals("empty String", service.functionField.apply(""));
     }
 
-    //private
-    private static final class FinalClass{
-        /**
-         * hello.
-         * @return "hello"
-         */
-        public String sayHello(){
-            return "hello";
-        }
-    }
 
-    @Test
-    public void incubatingDemo(){
-        FinalClass mock = mock(FinalClass.class);
-        when(mock.sayHello()).thenReturn("no hello");
-        assertEquals("no hello", mock.sayHello());
-    }
 
     @Test
     public void verifyDemo() {
@@ -93,10 +84,11 @@ public class MockitoTest {
         // verify invocation
         verify(mock).size();
         // verify invocation times
-        verify(mock,times(1)).size();
-        verify(mock,atLeastOnce()).size();
-        verify(mock,atMost(1)).size();
+        verify(mock, times(1)).size();
+        verify(mock, atLeastOnce()).size();
+        verify(mock, atMost(1)).size();
     }
+
     @Test
     public void inOrderDemo() {
         List sigMock = mock(List.class);
@@ -109,10 +101,10 @@ public class MockitoTest {
     }
 
     @Test
-    public void neverHappen(){
+    public void neverHappen() {
         List<String> sigMock = mock(List.class);
         sigMock.add("first");
-        verify(sigMock,never()).add("test");
+        verify(sigMock, never()).add("test");
     }
 
     @Test
@@ -137,33 +129,52 @@ public class MockitoTest {
     }
 
     @Test
+    public void answerDemoWithSleep() {
+        List sigMock = mock(List.class);
+
+        doAnswer((InvocationOnMock var) -> {
+            Integer argument = var.getArgument(0);
+            Thread.sleep(1000);
+            return argument > 2 ? ">2" : "<=2";
+        }).when(sigMock).get(anyInt());
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        assertEquals(">2", sigMock.get(3));
+        System.out.println(String.format("eclepse:%s", stopwatch.elapsed().toString()));
+        assertEquals("<=2", sigMock.get(2));
+        System.out.println(String.format("eclepse:%s", stopwatch.elapsed().toString()));
+    }
+
+    @Test
     public void timeoutDemo() {
         //spy 监控对象使用,有真实调用
         List<Integer> spyList = mock(List.class);
-        List<Integer> values = new ArrayList<>(10000);
-        for (int i = 0; i < 10000; i++) {
-            values.add(i);
-        }
-        spyList.addAll(values);
-        verify(spyList, timeout(1)).addAll(values);
+        Runnable ONE_SECOND_RUNNABLE = () -> {
+            try {
+                Thread.sleep(1000L);
+                spyList.addAll(null);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        new Thread(ONE_SECOND_RUNNABLE).start();
+        verify(spyList, timeout(2000)).addAll(any());
 
     }
 
     @Test
-    public void abstractDemo(){
+    public void abstractDemo() {
         Function spy = spy(Function.class);
         doAnswer((InvocationOnMock var1) -> "null result").when(spy).apply(any());
         assertEquals("null result", spy.apply("test"));
     }
 
     @Test
-    public void doCapture(){
+    public void doCapture() {
         List<String> sigMock = mock(List.class);
         ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
-
-        doReturn("any result").when(sigMock).get(anyInt());
-
-        assertEquals("any result", sigMock.get(0));
+        doReturn("any result!").when(sigMock).get(anyInt());
+        assertEquals("any result!", sigMock.get(0));
+        //catch the parameter passed to mock-object
         verify(sigMock).get(captor.capture());
         assertEquals(0, captor.getValue().intValue());
     }
@@ -196,6 +207,7 @@ public class MockitoTest {
         //Impossible: real method is called so spy.get(0) throws IndexOutOfBoundsException (the list is yet empty)
         when(spyList.get(0)).thenReturn("foo");
         assertEquals("foo", spyList.get(0));
+        // assertEquals("two", spyList.get(1));
         // 若spyList被方法体使用,则返回100
         assertEquals(100, spyList.size());
     }
@@ -213,9 +225,9 @@ public class MockitoTest {
             //print error.
             System.out.println("assertEquals error");
         }
-        verify(mockList,times(0)).add("three");
-        verify(mockList,times(1)).add("one");
-        verify(mockList,times(1)).add("two");
+        verify(mockList, times(0)).add("three");
+        verify(mockList, times(1)).add("one");
+        verify(mockList, times(1)).add("two");
         // mock behavior
         doReturn(2).when(mockList).size();
         assertEquals(2, mockList.size());
@@ -227,7 +239,7 @@ public class MockitoTest {
     }
 
     @Test
-    public void mockingDetail(){
+    public void mockingDetail() {
         List<String> mock = mock(List.class);
         MockingDetails details = mockingDetails(mock);
         details.getInvocations();
@@ -236,11 +248,37 @@ public class MockitoTest {
     }
 
     @Test
-    public void bdd(){
+    public void bdd() {
         List<Integer> mock = mock(List.class);
         given(mock.get(anyInt())).willAnswer((InvocationOnMock iom) -> 1);
         assertEquals(1, mock.get(10).intValue());
         verify(mock).get(anyInt());
+    }
+
+    @Test
+    public void incubatingDemo() {
+        // 普通mock
+        FinalClass mock = mock(FinalClass.class);
+        when(mock.sayHello()).thenReturn("no hello");
+        assertEquals("no hello", mock.sayHello());
+        // power mocked
+        PowerMockito.mockStatic(FinalClass.class);
+        mock = PowerMockito.mock(FinalClass.class);
+        PowerMockito.when(mock.sayHello()).thenReturn("power mock hello");
+        assertEquals("power mock hello", mock.sayHello());
+
+    }
+
+    //private
+    private static final class FinalClass {
+        /**
+         * hello.
+         *
+         * @return "hello"
+         */
+        public String sayHello() {
+            return "hello";
+        }
     }
 
 }

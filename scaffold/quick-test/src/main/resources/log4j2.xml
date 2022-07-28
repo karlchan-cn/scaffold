@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <DynamicThresholdFilter key="t-onlinedebug" defaultThreshold="INFO"
+                            onMatch="ACCEPT" onMismatch="NEUTRAL">
+        <KeyValuePair key="on" value="DEBUG"/>
+    </DynamicThresholdFilter>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
+        </Console>
+        <RollingFile name="default"  fileName="quick-test.log"
+                     filePattern="quick-test-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="logs" maxDepth="2">
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <RollingFile name="statAppender"  fileName="stat-quick-test.log"
+                     filePattern="stat-quick-test-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout pattern="%d{MM/dd HH:mm:ss} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="logs" maxDepth="2">
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <!--error logging-->
+        <RollingFile name="error" fileName="error-quick-test.log"
+                     filePattern="error-quick-test-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%thread] [%logger{15}] [%X{traceId}] \: %m%n"/>
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="300 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="logs" maxDepth="2">
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+
+        <Root level="${sys:log.level:-info}">
+<!--            <AppenderRef ref="console"/>-->
+            <AppenderRef ref="error"/>
+            <AppenderRef ref="default"/>
+        </Root>
+
+        <Logger name="ExecutorStatPool" level="debug" includeLocation="false" additivity="false">
+            <AppenderRef ref="statAppender"/>
+        </Logger>
+
+        <Logger name="com.scaffold.log" level="${sys:log.level:-info}" additivity="false" includeLocation="false">
+            <AppenderRef ref="default"/>
+            <AppenderRef ref="error"/>
+            <AppenderRef ref="console"/>
+        </Logger>
+    </Loggers>
+</Configuration>

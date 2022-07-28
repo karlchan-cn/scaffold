@@ -19,7 +19,21 @@ public class MockitoPowerMockTest {
         assertEquals("hello", StaticMethod.sayHello());
         // mocked
         PowerMockito.mockStatic(StaticMethod.class);
-        when(StaticMethod.sayHello()).thenReturn("mock hello");
+        PowerMockito.when(StaticMethod.sayHello()).thenReturn("mock hello");
         assertEquals("mock hello", StaticMethod.sayHello());
+    }
+
+    /**
+     * static class for test static method.
+     */
+    private static final class StaticMethod {
+        /**
+         * say hello for test.
+         *
+         * @return hello.
+         */
+        public static String sayHello() {
+            return "hello";
+        }
     }
 }
