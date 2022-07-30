@@ -1,5 +1,7 @@
 package com.scaffold.service.rpc;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * say hello service definition.
  */
@@ -10,4 +12,6 @@ public interface GreetingService {
      * @return word to be returned.
      */
     String greetingWithOneWord();
+
+    CompletableFuture<String> greetingWithOneWordAsync();
 }

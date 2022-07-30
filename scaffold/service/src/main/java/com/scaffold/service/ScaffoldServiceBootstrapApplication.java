@@ -6,13 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import java.util.Arrays;
-
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableDubbo
-public class ScaffoldBootstrapApplication {
+public class ScaffoldServiceBootstrapApplication {
     public static void main(String[] args) {
-        final SpringApplicationBuilder springApplicationBuilder = new SpringApplicationBuilder(ScaffoldBootstrapApplication.class);
+        final SpringApplicationBuilder springApplicationBuilder = new SpringApplicationBuilder(ScaffoldServiceBootstrapApplication.class);
         springApplicationBuilder
                 .web(WebApplicationType.NONE);
 

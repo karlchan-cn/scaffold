@@ -11,6 +11,8 @@ import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,9 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @DubboService(registry = {"innerRegistry"}, group = "${biz.type:local}.irg", version = "1.0.0", protocol = "dubbo",
-        timeout = 10000, retries = 0, actives = 512, executes = 512, delay = -1, connections = 1)
+        timeout = 1000000, retries = 0, actives = 1024, executes = 1024, delay = -1
+        //, connections = 1
+)
 public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements GreetingService {
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    public static Executor es = null;
 
     @Override
     public String greetingWithOneWord() {
@@ -39,6 +44,21 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
     }
 
     @Override
+    public CompletableFuture<String> greetingWithOneWordAsync() {
+        log.info("greetingWithOneWordAsync threadInfo:{}|{}", Thread.currentThread().getId(), Thread.currentThread().getName());
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("greet supplyAsync threadInfo:{}|{}", Thread.currentThread().getId(), Thread.currentThread().getName());
+                // sleep 10 second
+                Thread.sleep(5_000L);
+            } catch (InterruptedException e) {
+                log.error("greetingWithOneWordAsync sleep error", e);
+            }
+            return greetingWithOneWord();
+        });
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             log.info("receive msg:{}", msg);
@@ -46,7 +66,6 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
             ReferenceCountUtil.release(msg);
         }
     }
-
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
@@ -86,10 +105,8 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
                         })
                         .option(ChannelOption.SO_BACKLOG, 128)          // (5)
                         .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
-
                 // Bind and start to accept incoming connections.
                 ChannelFuture f = b.bind(8888).sync(); // (7)
-
                 // Wait until the server socket is closed.
                 // In this example, this does not happen, but you can do that to gracefully
                 // shut down your server.
@@ -102,6 +119,5 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
                 bossGroup.shutdownGracefully();
             }
         }).start();
-
     }
 }

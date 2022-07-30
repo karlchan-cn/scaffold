@@ -7,7 +7,6 @@ import org.apache.dubbo.common.timer.Timer;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.remoting.exchange.support.DefaultFuture;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -18,16 +17,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
 
 @Component(value = "GreetingServiceImplTest")
 @Slf4j
 public class GreetingServiceImplTest {
-    @DubboReference(async = false, version = "1.0.0", group = "local.irg",
-            connections = 1, actives = 512, url = "dubbo://10.101.129.150:25001",
-            timeout = 100000, loadbalance = "leastactive", check = false, retries = 0)
+    @DubboReference(async = true, version = "1.0.0", group = "local.irg", url = "dubbo://127.0.0.1:25001",
+            loadbalance = "leastactive", check = false, retries = 0,timeout = 1000_000)
     private GreetingService greetingService;
-
 
     @Before
     public void setUp() throws Exception {
@@ -48,31 +49,22 @@ public class GreetingServiceImplTest {
         start = System.currentTimeMillis();
         list2.removeIf(ad -> ad.longValue() > 0);
         System.out.println(System.currentTimeMillis() - start);
-        
-
-//        for (int i = 0; i < 100; i++) {
-//            final int idx = i;
-//            new Thread(() -> {
-//                try {
-//                    System.out.println("index:" + idx);
-//                    greetingService.greetingWithOneWord();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    System.out.println();
-//                }
-//            }).start();
-//        }
-//        Thread.sleep(1000000);
     }
+
     /**
      * rpc invoke greeting service
      *
      * @return word from greeting service.
      */
     public String invokeGreetingService() throws Exception {
-        log.error("error for 1234", new Throwable("throw"));
-        log.error("error for %d",100L);
+        //log.error("error for 1234", new Throwable("throw"));
+        log.error("error for %d", 100L);
         Map<Long, DefaultFuture> futures = null;
+        greetingService.greetingWithOneWordAsync();
+        //greetingService.greetingWithOneWordAsync();
+        if (true) {
+            return "";
+        }
         Timer timer = null;
         Field[] fields = DefaultFuture.class.getDeclaredFields();
         //System.out.println(greetingService.greetingWithOneWord());
@@ -102,21 +94,44 @@ public class GreetingServiceImplTest {
         return retulst;
     }
 
+    @Test
+    public void greetingWithOneWordAsync() throws InterruptedException, TimeoutException, ExecutionException {
+        GreetingServiceImplTest gst = initGreetingTest();
+        CompletableFuture<String> firstCf = gst.greetingService.greetingWithOneWordAsync().whenComplete((resultAction));
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            log.error("greetingWithOneWordAsync sleep error", e);
+        }
+        CompletableFuture<String> seondCF = gst.greetingService.greetingWithOneWordAsync().whenComplete(resultAction);
+        CompletableFuture.allOf(firstCf,seondCF).get(3600_000,TimeUnit.MINUTES);
+    }
+
+    private BiConsumer<String, Throwable> resultAction = (String result, Throwable t) -> {
+        if (t != null) {
+            log.error("invoke error", t);
+            return;
+        }
+        log.info("result is :{}", result);
+    };
+
+    private GreetingServiceImplTest initGreetingTest() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestApplicationConfig.class);
+        context.start();
+        return (GreetingServiceImplTest) context.getBean("GreetingServiceImplTest");
+    }
+
     @After
     public void tearDown() throws Exception {
     }
 
     @Test
-    public void greetingWithOneWord() throws IllegalAccessException, Exception {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestApplicationConfig.class);
-        context.start();
-        final GreetingServiceImplTest greetingServiceImplTest = (GreetingServiceImplTest) context.getBean("GreetingServiceImplTest");
-        for (int i = 0;i<10;i++){
-
+    public void greetingWithOneWord() throws Exception {
+        for (int i = 0; i < 10; i++) {
             //greetingServiceImplTest.invoke500Times();
-            System.out.println("--------");
+            //System.out.println("--------");
         }
-
-        Assert.assertTrue(("greeting with hello").equals(greetingServiceImplTest.invokeGreetingService()));
+        initGreetingTest().invokeGreetingService();
+        //Assert.assertTrue(("greeting with hello").equals(greetingServiceImplTest.invokeGreetingService()));
     }
 }

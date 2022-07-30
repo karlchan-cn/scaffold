@@ -25,12 +25,12 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-<!--        <Logger name="ExecutorStatPool" level="debug">-->
-<!--            <AppenderRef ref="statAppender"/>-->
-<!--        </Logger>-->
+        <Logger name="com.scaffold.service.rpc" level="debug">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="console"/>
-<!--            <AppenderRef ref="info"/>-->
+            <AppenderRef ref="info"/>
         </Root>
     </Loggers>
 </Configuration>

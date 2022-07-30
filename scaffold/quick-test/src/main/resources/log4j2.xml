@@ -53,7 +53,7 @@
     <Loggers>
 
         <Root level="${sys:log.level:-info}">
-<!--            <AppenderRef ref="console"/>-->
+            <AppenderRef ref="console"/>
             <AppenderRef ref="error"/>
             <AppenderRef ref="default"/>
         </Root>

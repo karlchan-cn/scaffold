@@ -151,8 +151,14 @@
             <artifactId>jetty-servlet</artifactId>
             <version>9.4.11.v20180605</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+        </dependency>
 
     </dependencies>
     <build>
@@ -190,7 +196,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <Main-Class>com.scaffold.service.ScaffoldBootstrapApplication</Main-Class>
+                            <Main-Class>com.scaffold.service.ScaffoldServiceBootstrapApplication</Main-Class>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs</classpathPrefix>
                             <useUniqueVersions>false</useUniqueVersions>
