@@ -10,14 +10,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@ComponentScan(value = {"com.scaffold.service.test.*"})
 @Configuration
 @Slf4j
-@EnableDubbo(scanBasePackages = {"com.scaffold.service.test.*"})
+@EnableDubbo(scanBasePackages = {"com.scaffold.service.test.*",
+        "com.scaffold.service.dubbo.*"})
+@ComponentScan(value = {"com.scaffold.service.test.*", "com.scaffold.service.aop",
+        "com.scaffold.service.dubbo.*"})
+@EnableAspectJAutoProxy
 public class TestApplicationConfig {
     @Value("zookeeper://127.0.0.1:2181?timeout=60000")
     private String zkInnerAddr;

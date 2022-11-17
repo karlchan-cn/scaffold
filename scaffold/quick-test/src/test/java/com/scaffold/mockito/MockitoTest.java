@@ -2,25 +2,28 @@ package com.scaffold.mockito;
 
 
 import com.google.common.base.Stopwatch;
-        import org.junit.Rule;
-        import org.junit.Test;
-        import org.junit.runner.RunWith;
-        import org.mockito.*;
-        import org.mockito.invocation.InvocationOnMock;
-        import org.mockito.junit.MockitoJUnit;
-        import org.mockito.junit.MockitoRule;
-        import org.powermock.api.mockito.PowerMockito;
-        import org.powermock.core.classloader.annotations.PrepareForTest;
-        import org.powermock.modules.junit4.PowerMockRunner;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
 
-        import java.util.ArrayList;
-        import java.util.List;
-        import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
-        import static org.junit.Assert.assertEquals;
-        import static org.junit.Assert.assertNotNull;
-        import static org.mockito.BDDMockito.given;
-        import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 //
 
@@ -33,6 +36,9 @@ import com.google.common.base.Stopwatch;
  */
 //@RunWith(MockitoJUnitRunner.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({"javax.xml.*", "com.sun.org.apache.xerces.*",
+        "org.xml.*", "javax.management.*"
+        , "org.w3c.*"})
 @PrepareForTest(StaticMethod.class)
 public class MockitoTest {
     //@Captor, @Spy, @InjectMocks自动生效
@@ -42,11 +48,41 @@ public class MockitoTest {
     @Mock
     private List<String> mock;
 
+    //private Logger log;
+
     @InjectMocks
     private InnerService service;
 
+
+
     @Mock
     private Function<String, String> function;
+
+    @InjectMocks
+    private LogServiceImpl logService;
+
+
+
+    @Test
+    public void testMockSlf4jLog(){
+        // mock一个slf Logger
+        final Logger mockLog = mock(Logger.class);
+        // 设置private属性
+        Whitebox.setInternalState(LogServiceImpl.class,
+                "log",
+                mockLog);
+        // 设置一个参数获取器
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        // 真实调用方法
+        logService.logInfo();
+        // 获取参数
+        verify(mockLog).info(captor.capture());
+        // 判断调用次数
+        verify(mockLog,times(1)).info(anyString());
+        //校验log传递的参数
+        assertEquals(captor.getValue(),"hello log");
+        assertNotEquals(captor.getValue(),"hello lo");
+    }
 
     @Test
     public void staticMethodMock() {
@@ -60,7 +96,9 @@ public class MockitoTest {
         public InnerService(Function<String, String> func) {
             this.functionField = func;
         }
+        public void logDemo() {
 
+        }
         /**
          * 1. {"flag":true}--
          * 2. {"flag":false} ---
@@ -73,7 +111,12 @@ public class MockitoTest {
     public void injectMockDemo() {
         //do return when.
         doReturn("empty String").when(function).apply(anyString());
+        // 设置private属性
+
+        service.logDemo();
+        //verify(log,times(1)).info(anyString());
         assertEquals("empty String", service.functionField.apply(""));
+
     }
 
 

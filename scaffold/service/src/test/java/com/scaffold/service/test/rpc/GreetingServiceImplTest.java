@@ -1,14 +1,18 @@
 package com.scaffold.service.test.rpc;
 
+import com.scaffold.service.dubbo.protocol.AdDubboInvoker;
 import com.scaffold.service.rpc.GreetingService;
 import com.scaffold.service.test.conf.TestApplicationConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.timer.Timer;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.remoting.exchange.support.DefaultFuture;
+import org.apache.dubbo.rpc.FutureContext;
+import org.apache.dubbo.rpc.RpcContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +27,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
+import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
+
 @Component(value = "GreetingServiceImplTest")
 @Slf4j
 public class GreetingServiceImplTest {
-    @DubboReference(async = true, version = "1.0.0", group = "local.irg", url = "dubbo://127.0.0.1:25001",
-            loadbalance = "leastactive", check = false, retries = 0,timeout = 1000_000)
+    @DubboReference(protocol = "" ,async = true, version = "1.0.0", group = "local.irg", url = "dubbo://127.0.0.1:25001",
+            loadbalance = "leastactive", check = false, retries = 0, timeout = 30000)
     private GreetingService greetingService;
+
+    @Autowired
+    private GreetingServiceProxy greetingServiceProxy;
+
+    public GreetingService getGreetingService() {
+        return this.greetingService;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -104,7 +117,7 @@ public class GreetingServiceImplTest {
             log.error("greetingWithOneWordAsync sleep error", e);
         }
         CompletableFuture<String> seondCF = gst.greetingService.greetingWithOneWordAsync().whenComplete(resultAction);
-        CompletableFuture.allOf(firstCf,seondCF).get(3600_000,TimeUnit.MINUTES);
+        CompletableFuture.allOf(firstCf, seondCF).get(3600_000, TimeUnit.MINUTES);
     }
 
     private BiConsumer<String, Throwable> resultAction = (String result, Throwable t) -> {
@@ -123,6 +136,39 @@ public class GreetingServiceImplTest {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void greetingTestWithTimeout() throws ExecutionException, InterruptedException, TimeoutException {
+        //接口默认超时100ms
+        final GreetingServiceImplTest greetingServiceImplTest = initGreetingTest();
+        final GreetingService gs = greetingServiceImplTest.getGreetingService();
+        invokeTimeoutTest(gs, "first invoke with timeout 300ms, result is:{}", "first invoke with timeout 300ms,, invoke exception.cost ms:{}");
+        final RpcContext context = RpcContext.getContext();
+        // 动态设置超时时间
+        context.setAttachment(AdDubboInvoker.DYNAMIC_TIMEOUT_KEY, "2000");
+        invokeTimeoutTest(gs, "after consutomed timeout 2000ms, result is:{}", "after consutomed timeout 1000ms, invoke exception.cost ms:{}");
+        context.setAttachment(AdDubboInvoker.DYNAMIC_TIMEOUT_KEY, "2000");
+        invokeTimeoutTest(gs, "reinvoke after consutomed timeout 2000ms, result is:{}", "reinvoke after consutomed timeout 1000ms, invoke exception.cost ms:{}");
+        // 还原超时时间
+        context.removeAttachment(AdDubboInvoker.DYNAMIC_TIMEOUT_KEY);
+        invokeTimeoutTest(gs, "remove dynamic-timeout, result is:{}", "remove dynamic-timeout, invoke exception.cost ms:{}");
+        greetingServiceImplTest.dynamicTimeout();
+    }
+
+    private void dynamicTimeout() {
+        greetingServiceProxy.greetingSleepWith500MS();
+    }
+
+
+    private void invokeTimeoutTest(GreetingService gs, String msg, String errMsg) {
+        long start = System.currentTimeMillis();
+        try {
+            gs.greetingSleepWith500MS();
+            log.info(msg, FutureContext.getContext().getCompletableFuture().get(10000, TimeUnit.MILLISECONDS));
+        } catch (Exception e) {
+            log.error(errMsg, System.currentTimeMillis() - start, e);
+        }
     }
 
     @Test

@@ -25,9 +25,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.scaffold.service.rpc" level="debug">
-            <AppenderRef ref="console"/>
-        </Logger>
+<!--        <Logger name="com.scaffold.service.rpc" level="debug">-->
+<!--            <AppenderRef ref="console"/>-->
+<!--        </Logger>-->
         <Root level="info">
             <AppenderRef ref="console"/>
             <AppenderRef ref="info"/>

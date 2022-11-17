@@ -13,5 +13,19 @@ public interface GreetingService {
      */
     String greetingWithOneWord();
 
+    /**
+     * 睡眠1000ms后返回.
+     *
+     * @return
+     */
+    String greetingSleepWithOneSeconde();
+
+    /**
+     * 睡眠500ms后返回.
+     *
+     * @return
+     */
+    String greetingSleepWith500MS();
+
     CompletableFuture<String> greetingWithOneWordAsync();
 }

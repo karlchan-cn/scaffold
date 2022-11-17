@@ -11,6 +11,7 @@
 
     <artifactId>service</artifactId>
     <dependencies>
+
         <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-core</artifactId>

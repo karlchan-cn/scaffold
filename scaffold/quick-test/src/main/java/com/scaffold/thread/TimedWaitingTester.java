@@ -18,13 +18,13 @@ public class TimedWaitingTester {
         final CompletableFuture<Long> longCompletableFuture = CompletableFuture.supplyAsync(() -> {
             try {
                 System.out.printf("begin to sleep for 10000 second");
-                Thread.sleep(10000000);
+                Thread.sleep(100_000_000L);
             } catch (InterruptedException e) {
 
             }
             return 1000L;
         });
-        longCompletableFuture.orTimeout(10000000, TimeUnit.MILLISECONDS);
+        longCompletableFuture.orTimeout(20_000L, TimeUnit.MILLISECONDS);
         longCompletableFuture.join();
     }
 }

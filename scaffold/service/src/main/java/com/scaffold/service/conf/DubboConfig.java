@@ -32,7 +32,7 @@ public class DubboConfig {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setName("dubbo");
         //测试单线程池
-        protocolConfig.setThreads(1);
+        protocolConfig.setThreads(100);
         //
         protocolConfig.setAccepts(1024);
         protocolConfig.setThreadname("GreetingServicePool");

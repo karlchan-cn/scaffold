@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @DubboService(registry = {"innerRegistry"}, group = "${biz.type:local}.irg", version = "1.0.0", protocol = "dubbo",
-        timeout = 1000000, retries = 0, actives = 1024, executes = 1024, delay = -1
+        timeout = 100, retries = 0, actives = 1024, executes = 1024, delay = -1
         //, connections = 1
 )
 public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements GreetingService {
@@ -41,6 +41,28 @@ public class GreetingServiceImpl extends ChannelInboundHandlerAdapter implements
         }
         //log.info("return greeting with hello");
         return result;
+    }
+
+    public String greetingSleepWithParamMs(long sleepMs) {
+        final long start = System.currentTimeMillis();
+        try {
+            Thread.sleep(sleepMs);
+        } catch (InterruptedException e) {
+            log.error("");
+        }
+        String result = "hello from user:" + COUNTER.getAndIncrement() + ", with timeout ms:" + sleepMs + ", cost:" + (System.currentTimeMillis() - start) + "ms";
+        log.info(result);
+        return result;
+    }
+
+    @Override
+    public String greetingSleepWithOneSeconde() {
+        return greetingSleepWithParamMs(1000L);
+    }
+
+    @Override
+    public String greetingSleepWith500MS() {
+        return greetingSleepWithParamMs(500L);
     }
 
     @Override
